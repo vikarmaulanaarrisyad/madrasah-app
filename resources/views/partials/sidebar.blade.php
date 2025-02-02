@@ -48,22 +48,37 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
+                    <a href="{{ route('teachers.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-chalkboard-teacher"></i>
                         <p>
-                            Rombel
+                            Guru
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
+                        <i class="nav-icon fas fa-user-graduate"></i>
                         <p>
                             Data Siswa
                         </p>
                     </a>
                 </li>
-
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>
+                            Presensi Siswa
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-book-open"></i>
+                        <p>
+                            Jurnal Mengajar Guru
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

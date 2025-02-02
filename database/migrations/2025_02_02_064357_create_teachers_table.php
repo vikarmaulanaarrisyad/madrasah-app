@@ -17,6 +17,13 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('brith_place');
             $table->date('birth_date');
+            $table->unsignedBigInteger('m_gender_id');
+            $table->unsignedBigInteger('m_religion_id');
+            $table->text('address')->nullable();
+            $table->text('full_address')->nullable();
+            $table->string('rt');
+            $table->string('rw');
+            $table->integer('postal_code_num')->default(0);
             $table->date('tmt_teacher');
             $table->date('tmt_employe');
             $table->timestamps();
