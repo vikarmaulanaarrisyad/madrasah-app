@@ -1,23 +1,27 @@
-<form id="form-siswa" action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data">
+<form id="form-siswa" action="{{ route('students.update', $student->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
+    @method('PUT') <!-- This indicates that the form is for updating (PUT method) -->
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
                 <label for="full_name" class="form-label">Nama Lengkap</label>
                 <input type="text" id="full_name" name="full_name" class="form-control"
-                    value="{{ old('full_name') }}">
+                    value="{{ old('full_name', $student->full_name) }}">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="local_nis" class="form-label">NIS</label>
-                <input type="text" name="local_nis" class="form-control" value="{{ old('local_nis') }}">
+                <input type="text" name="local_nis" class="form-control"
+                    value="{{ old('local_nis', $student->local_nis) }}">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="nisn" class="form-label">NISN</label>
-                <input type="text" id="nisn" name="nisn" class="form-control" value="{{ old('nisn') }}">
+                <input type="text" id="nisn" name="nisn" class="form-control"
+                    value="{{ old('nisn', $student->nisn) }}">
             </div>
         </div>
     </div>
@@ -29,7 +33,8 @@
                 <select name="m_gender_id" class="form-control">
                     <option disabled selected>Pilih salah satu</option>
                     @foreach ($genders as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}" {{ $student->m_gender_id == $id ? 'selected' : '' }}>
+                            {{ $item }}</option>
                     @endforeach
                 </select>
             </div>
@@ -37,7 +42,8 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="birth_place" class="form-label">Tempat Lahir</label>
-                <input type="text" name="birth_place" class="form-control" value="{{ old('birth_place') }}">
+                <input type="text" name="birth_place" class="form-control"
+                    value="{{ old('birth_place', $student->birth_place) }}">
             </div>
         </div>
     </div>
@@ -49,7 +55,7 @@
                 <div class="input-group datepicker" id="birth_date" data-target-input="nearest">
                     <input type="text" name="birth_date" class="form-control datetimepicker-input"
                         data-target="#birth_date" data-toggle="datetimepicker" autocomplete="off"
-                        placeholder="Masukkan tanggal lahir" />
+                        placeholder="Masukkan tanggal lahir" value="{{ old('birth_date', $student->birth_date) }}" />
                     <div class="input-group-append" data-target="#birth_date" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                     </div>
@@ -61,15 +67,16 @@
                 <label for="status">Status</label>
                 <select name="status" class="form-control">
                     <option disabled selected>Pilih salah satu</option>
-                    <option value="1">Aktif</option>
-                    <option value="0">Tidak Aktif</option>
+                    <option value="1" {{ $student->status == 1 ? 'selected' : '' }}>Aktif</option>
+                    <option value="0" {{ $student->status == 0 ? 'selected' : '' }}>Tidak Aktif</option>
                 </select>
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="kk_num">Nomor KK</label>
-                <input id="kk_num" class="form-control" type="text" name="kk_num">
+                <input id="kk_num" class="form-control" type="text" name="kk_num"
+                    value="{{ old('kk_num', $student->kk_num) }}">
             </div>
         </div>
     </div>
@@ -78,31 +85,38 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="nik_siswa" class="form-label">NIK</label>
-                <input type="text" name="nik_siswa" class="form-control" value="{{ old('nik_siswa') }}">
+                <input type="text" name="nik_siswa" class="form-control"
+                    value="{{ old('nik_siswa', $student->nik) }}">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="siblings_num" class="form-label">Jumlah Saudara</label>
-                <input type="number" name="siblings_num" class="form-control" value="{{ old('siblings_num', 0) }}">
+                <input type="number" name="siblings_num" class="form-control"
+                    value="{{ old('siblings_num', $student->siblings_num) }}">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
                 <label for="child_of_num" class="form-label">Anak Ke</label>
-                <input type="number" name="child_of_num" class="form-control" value="{{ old('child_of_num', 0) }}">
+                <input type="number" name="child_of_num" class="form-control"
+                    value="{{ old('child_of_num', $student->child_of_num) }}">
             </div>
         </div>
     </div>
+
+    <!-- Repeat the same for other fields as shown above -->
 
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
                 <label for="m_religion_id" class="form-label">Agama</label>
                 <select name="m_religion_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($religions as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}" {{ $student->religion_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -111,9 +125,11 @@
             <div class="form-group">
                 <label for="m_hobby_id" class="form-label">Hobi</label>
                 <select name="m_hobby_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($hobbies as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}" {{ $student->hobby_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -122,23 +138,29 @@
             <div class="form-group">
                 <label for="m_life_goal_id" class="form-label">Cita-Cita</label>
                 <select name="m_life_goal_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($lifeGoals as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}" {{ $student->life_goal_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
         </div>
     </div>
 
+
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
                 <label for="m_residence_status_id" class="form-label">Status Tempat Tinggal</label>
                 <select name="m_residence_status_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($residenceStatus as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}"
+                            {{ $student->residence_status_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -147,9 +169,12 @@
             <div class="form-group">
                 <label for="m_residence_distance_id" class="form-label">Jarak</label>
                 <select name="m_residence_distance_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($residenceDistance as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}"
+                            {{ $student->residence_distance_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -158,53 +183,60 @@
             <div class="form-group">
                 <label for="m_interval_time_id" class="form-label">Waktu Tempuh</label>
                 <select name="m_interval_time_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($times as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}"
+                            {{ $student->interval_time_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="m_transportation_id" class="form-label">Tranportasi</label>
+                <label for="m_transportation_id" class="form-label">Transportasi</label>
                 <select name="m_transportation_id" class="form-control">
-                    <option disabled selected>Pilih salah satu</option>
+                    <option disabled>Pilih salah satu</option>
                     @foreach ($transportations as $item => $id)
-                        <option value="{{ $id }}"> {{ $item }}</option>
+                        <option value="{{ $id }}"
+                            {{ $student->transportation_id == $id ? 'selected' : '' }}>
+                            {{ $item }}
+                        </option>
                     @endforeach
                 </select>
             </div>
         </div>
     </div>
-
     <div class="row">
         <div class="col-lg-3">
             <div class="form-group">
-                <label for="tr" class="form-label">RT</label>
-                <input type="text" name="rt" class="form-control" id="rt">
+                <label for="rt" class="form-label">RT</label>
+                <input type="text" name="rt" class="form-control" id="rt"
+                    value="{{ old('rt', $student->rt) }}">
             </div>
         </div>
         <div class="col-lg-3">
             <div class="form-group">
                 <label for="rw" class="form-label">RW</label>
-                <input type="text" name="rw" class="form-control" id="rw">
+                <input type="text" name="rw" class="form-control" id="rw"
+                    value="{{ old('rw', $student->rw) }}">
             </div>
         </div>
         <div class="col-lg-6">
             <div class="form-group">
                 <label for="address" class="form-label">Alamat</label>
-                <textarea name="address" class="form-control" rows="2">{{ old('address') }}</textarea>
+                <textarea name="address" class="form-control" rows="2">{{ old('address', $student->address) }}</textarea>
             </div>
         </div>
-
     </div>
 
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
                 <label for="postal_code_num" class="form-label">Kode Pos</label>
-                <input type="number" name="postal_code_num" class="form-control">
+                <input type="number" name="postal_code_num" class="form-control"
+                    value="{{ old('postal_code_num', $student->postal_code_num) }}">
             </div>
         </div>
         <div class="col-md-6">
@@ -212,19 +244,22 @@
                 <label for="sekolah_sebelumnya" class="form-label">Sekolah Sebelumnya</label>
                 <div class="form-check">
                     <input type="checkbox" name="entered_tk_ra" value="1" id="entered_tk_ra"
-                        class="form-check-input" onclick="toggleCheckbox(this, 'entered_paud')">
+                        class="form-check-input"
+                        {{ old('entered_tk_ra', $student->entered_tk_ra) == 1 ? 'checked' : '' }}
+                        onclick="toggleCheckbox(this, 'entered_paud')">
                     <label for="entered_tk_ra" class="form-check-label">TK</label>
                 </div>
                 <div class="form-check">
                     <input type="checkbox" name="entered_paud" value="1" id="entered_paud"
-                        class="form-check-input" onclick="toggleCheckbox(this, 'entered_tk_ra')">
+                        class="form-check-input"
+                        {{ old('entered_paud', $student->entered_paud) == 1 ? 'checked' : '' }}
+                        onclick="toggleCheckbox(this, 'entered_tk_ra')">
                     <label for="entered_paud" class="form-check-label">PAUD</label>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-    </div>
+
 
     <div class="row">
         <div class="col-md-6">
@@ -247,7 +282,7 @@
                 <label class="form-label">Preview</label>
                 <div class="rounded p-2">
                     <img id="preview"
-                        src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                        src="{{ Storage::url($student->upload_photo) ?: 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg' }}"
                         class="img-fluid rounded" width="150" height="150">
                 </div>
             </div>
@@ -258,7 +293,9 @@
     <button type="submit" id="btn-simpan" class="btn btn-primary float-right">Simpan</button>
 </form>
 
+
 @include('includes.datepicker')
+
 
 @push('scripts')
     <script>
@@ -382,16 +419,6 @@
                 contentType: false,
                 headers: {
                     'X-CSRF-TOKEN': $('input[name=_token]').val() // Tambahkan token CSRF
-                },
-                beforeSend: function() {
-                    Swal.fire({
-                        title: 'Menyimpan data...',
-                        text: 'Mohon tunggu sebentar.',
-                        allowOutsideClick: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
                 },
                 success: function(response) {
                     btn.prop('disabled', false).text('Simpan');

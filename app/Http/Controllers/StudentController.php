@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AverageIncome;
+use App\Models\Education;
 use App\Models\Gender;
 use App\Models\Hobby;
+use App\Models\Job;
 use App\Models\LifeGoal;
+use App\Models\LifeStatus;
+use App\Models\Parents;
 use App\Models\Religion;
 use App\Models\ResidenceDistance;
 use App\Models\ResidenceStatus;
@@ -199,8 +204,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrfail($id);
-        $student->birth_date = Carbon::parse($student->birth_date)->format('Y-m-d');
+        $parent = Parents::where('student_id', $id)->first();
 
+        $student->birth_date = Carbon::parse($student->birth_date)->format('Y-m-d');
         $genders = Gender::pluck('id', 'name');
         $religions = Religion::pluck('id', 'name');
         $hobbies = Hobby::pluck('id', 'name');
@@ -209,6 +215,10 @@ class StudentController extends Controller
         $residenceStatus = ResidenceStatus::pluck('id', 'name');
         $times = Time::pluck('id', 'name');
         $transportations = Transportation::pluck('id', 'name');
+        $educations = Education::pluck('id', 'name');
+        $lifeStatus = LifeStatus::pluck('id', 'name');
+        $jobs = Job::pluck('id', 'name');
+        $averageIncome = AverageIncome::pluck('id', 'name');
 
         return view('admin.student.edit', compact([
             'student',
@@ -219,7 +229,12 @@ class StudentController extends Controller
             'residenceDistance',
             'times',
             'transportations',
-            'residenceStatus'
+            'residenceStatus',
+            'educations',
+            'lifeStatus',
+            'jobs',
+            'averageIncome',
+            'parent'
         ]));
     }
 

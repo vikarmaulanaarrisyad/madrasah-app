@@ -260,7 +260,6 @@
         </div>
     </div>
 
-
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -419,6 +418,16 @@
                 contentType: false,
                 headers: {
                     'X-CSRF-TOKEN': $('input[name=_token]').val() // Tambahkan token CSRF
+                },
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Menyimpan data...',
+                        text: 'Mohon tunggu sebentar.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
                 },
                 success: function(response) {
                     btn.prop('disabled', false).text('Simpan');

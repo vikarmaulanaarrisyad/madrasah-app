@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AverageIncome;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -35,5 +36,9 @@ class AverageIncomeSeeder extends Seeder
                 'name' => 'Tidak ada'
             ],
         ];
+
+        foreach ($data as $value) {
+            AverageIncome::create($value);
+        }
     }
 }

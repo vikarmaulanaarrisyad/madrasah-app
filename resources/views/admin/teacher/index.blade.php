@@ -128,6 +128,62 @@
             $(button).prop('disabled', true);
             $('#spinner-border').show();
 
+            $.ajax({
+                type: 'POST',
+                url: $(originalForm).attr('action'),
+                data: new FormData(originalForm),
+                dataType: 'JSON',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Menyimpan data...',
+                        text: 'Mohon tunggu sebentar.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
+                success: function(response) {
+                    $(modal).modal('hide');
+                    if (response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 3000
+                        }).then(() => {
+                            $(button).prop('disabled', false);
+                            $('#spinner-border').hide();
+                            table.ajax.reload();
+                        });
+                    }
+                },
+                error: function(errors) {
+                    $('#spinner-border').hide();
+                    $(button).prop('disabled', false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops! Gagal',
+                        text: errors.responseJSON?.message || 'Terjadi kesalahan!',
+                        showConfirmButton: true,
+                    });
+
+                    if (errors.status === 422) {
+                        loopErrors(errors.responseJSON.errors);
+                    }
+                }
+            });
+
+        }
+
+        function submitForm1(originalForm) {
+            $(button).prop('disabled', true);
+            $('#spinner-border').show();
+
             $.post({
                     url: $(originalForm).attr('action'),
                     data: new FormData(originalForm),

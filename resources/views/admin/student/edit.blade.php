@@ -30,7 +30,7 @@
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="orangtua">
-
+                            @include('admin.student.form.parent-form')
                         </div>
                         <!-- /.tab-pane -->
 
