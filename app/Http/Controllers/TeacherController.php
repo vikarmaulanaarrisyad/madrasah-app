@@ -33,7 +33,7 @@ class TeacherController extends Controller
             ->addColumn('aksi', function ($q) {
                 return $this->renderActionButton($q);
             })
-            ->rawColumns(['status', 'aksi']) // Pastikan kolom ini diproses sebagai HTML
+            ->rawColumns(['status', 'aksi'])
             ->make(true);
     }
 

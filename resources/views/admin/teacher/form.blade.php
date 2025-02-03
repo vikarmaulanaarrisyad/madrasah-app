@@ -24,7 +24,7 @@
         </div>
         <div class="col-lg-6">
             <div class="form-group">
-                <label for="birth_date">Tanggal Mulai <span class="text-danger">*</span></label>
+                <label for="birth_date">Tanggal Lahir <span class="text-danger">*</span></label>
                 <div class="input-group datepicker" id="birth_date" data-target-input="nearest">
                     <input type="text" name="birth_date" class="form-control datetimepicker-input"
                         data-target="#birth_date" data-toggle="datetimepicker" autocomplete="off"

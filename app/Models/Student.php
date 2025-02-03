@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 class Student extends Model
 {
-    //
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class, 'm_gender_id', 'id');
+    }
 }
