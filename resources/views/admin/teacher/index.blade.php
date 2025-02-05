@@ -83,7 +83,7 @@
     </script>
 
     <script>
-        function addForm(url, title = 'Tambah Tahun Pelajaran') {
+        function addForm(url, title = 'Tambah Guru') {
             $(modal).modal('show');
             $(`${modal} .modal-title`).text(title);
             $(`${modal} form`).attr('action', url);
@@ -92,7 +92,7 @@
             resetForm(`${modal} form`);
         }
 
-        function editForm(url, title = 'Edit Tahun Pelajaran') {
+        function editForm(url, title = 'Edit Guru') {
             $.get(url)
                 .done(response => {
                     $(modal).modal('show');
@@ -147,7 +147,9 @@
                     });
                 },
                 success: function(response) {
+
                     $(modal).modal('hide');
+
                     if (response.status === 200) {
                         Swal.fire({
                             icon: 'success',
@@ -163,6 +165,7 @@
                     }
                 },
                 error: function(errors) {
+                    Swal.close();
                     $('#spinner-border').hide();
                     $(button).prop('disabled', false);
                     Swal.fire({

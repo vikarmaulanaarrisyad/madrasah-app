@@ -56,4 +56,9 @@ class Student extends Model
     {
         return $this->belongsTo(Transportation::class, 'm_transportation_id', 'id');
     }
+
+    public function learningActivities()
+    {
+        return $this->belongsToMany(LearningActivity::class, 'learning_activity_student', 'student_id', 'learning_activity_id');
+    }
 }

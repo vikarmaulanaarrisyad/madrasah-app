@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LearningActivityController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -29,5 +30,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('/students', StudentController::class);
 
         Route::post('/parents', [ParentController::class, 'store'])->name('parents.store');
+
+        // Route : LearningActivity / Rombel
+        Route::get('/rombel/data', [LearningActivityController::class, 'data'])->name('rombel.data');
+        Route::resource('/rombel', LearningActivityController::class);
+        Route::post('/rombel/{learningActivity}/add-student', [LearningActivityController::class, 'addStudent'])->name('rombel.addStudent');
+        Route::get('/rombel/rombel-detail/{id}', [LearningActivityController::class, 'detail'])->name('rombel.detail');
+        Route::delete('/rombel/{learningActivityId}/removeStudent/{studentId}', [LearningActivityController::class, 'removeStudent'])->name('rombel.removeStudent');
     });
 });

@@ -49,7 +49,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('teachers.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                        <i class="nav-icon fas fa-user-friends"></i>
                         <p>
                             Guru
                         </p>
@@ -60,6 +60,14 @@
                         <i class="nav-icon fas fa-user-graduate"></i>
                         <p>
                             Data Siswa
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('rombel.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Rombongan Belajar
                         </p>
                     </a>
                 </li>

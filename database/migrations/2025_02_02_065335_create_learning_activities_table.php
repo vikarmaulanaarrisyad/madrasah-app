@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('learning_activities', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('academic_year_id');
-            $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('m_level_id');
             $table->unsignedBigInteger('rombel_type_id');
             $table->unsignedBigInteger('teacher_id');
