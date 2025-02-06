@@ -48,6 +48,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('subjects.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>Mata Pelajaran</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('teachers.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-user-friends"></i>
                         <p>

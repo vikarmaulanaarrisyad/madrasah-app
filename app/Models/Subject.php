@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 class Subject extends Model
 {
-    //
+    public function curiculum()
+    {
+        return $this->belongsTo(Curiculum::class);
+    }
 }

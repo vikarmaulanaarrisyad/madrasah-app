@@ -25,38 +25,6 @@ class AttendaceController extends Controller
         return view('admin.attendance.index', compact('learningActivity', 'attendances', 'date', 'academicYears'));
     }
 
-    public function store1(Request $request, $learningActivityId)
-    {
-        // Get the date from the request or default to today
-        $date = $request->input('attendance_date', Carbon::today()->format('Y-m-d'));
-        // Get all the attendance statuses from the request
-        $attendances = $request->input('attendance', []);
-
-        foreach ($attendances as $studentId => $status) {
-            // Check if the attendance already exists for the given date
-            $attendance = Attendances::where('student_id', $studentId)
-                ->where('date', $date)
-                ->where('academic_year_id', $request->academic_year_id)
-                ->first();
-
-            if ($attendance) {
-                // If attendance exists, update the status
-                $attendance->status = $status ?? 'Alpa';
-                $attendance->save();
-            } else {
-                // If attendance does not exist, create a new one
-                Attendances::create([
-                    'student_id' => $studentId,
-                    'date' => $date,
-                    'academic_year_id' => $request->academic_year_id,
-                    'status' => $status ?? 'Alpa',
-                ]);
-            }
-        }
-
-        return response()->json(['success' => true, 'message' => 'Presensi berhasil disimpan!']);
-    }
-
     public function store(Request $request, $learningActivityId)
     {
         // Validasi input
