@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AttendaceController;
+use App\Http\Controllers\CuriculumController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LearningActivityController;
 use App\Http\Controllers\ParentController;
@@ -45,6 +46,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/rombel/{id}/attendance', [AttendaceController::class, 'show'])->name('attendance.show');
         Route::get('/attendance/filter', [AttendaceController::class, 'filterAttendance'])->name('attendance.filterAttendance');
         Route::post('/rombel/{id}/attendance', [AttendaceController::class, 'store'])->name('attendance.store');
+
+        // Route : Curiculums / Kurikulum
+        Route::get('/curiculums/data', [CuriculumController::class, 'data'])->name('curiculums.data');
+        Route::resource('/curiculums', CuriculumController::class);
 
         // Route : Subject / Mata Pelajaran
         Route::get('/subjects/data', [SubjectController::class, 'data'])->name('subjects.data');
