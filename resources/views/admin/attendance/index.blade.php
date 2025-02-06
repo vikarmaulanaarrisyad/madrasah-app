@@ -1,0 +1,175 @@
+@extends('layouts.app')
+
+@section('title', 'Presensi Rombel')
+
+@section('content')
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>Presensi untuk Rombel: {{ $learningActivity->name }}</h3>
+
+            <form id="attendance-form">
+                @csrf
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="academic_year_id">Tahun Ajaran</label>
+                            <select name="academic_year_id" id="academic_year_id" class="form-control">
+                                @foreach ($academicYears as $academicYear)
+                                    <option value="{{ $academicYear->id }}"
+                                        {{ old('academic_year_id') == $academicYear->id ? 'selected' : '' }}>
+                                        {{ $academicYear->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attendance_date">Pilih Tanggal</label>
+                            <input type="date" id="attendance_date" name="attendance_date" class="form-control"
+                                value="{{ $date }}">
+                        </div>
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Status Presensi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($learningActivity->students as $index => $student)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $student->full_name }}</td>
+                                        <td>
+                                            <select name="attendance[{{ $student->id }}]" class="form-control">
+                                                <option value=""
+                                                    {{ !isset($attendances[$student->id]) ? 'selected' : '' }}>Pilih Absensi
+                                                </option>
+                                                <option value="Hadir"
+                                                    {{ isset($attendances[$student->id]) && $attendances[$student->id]->status == 'Hadir' ? 'selected' : '' }}>
+                                                    Hadir</option>
+                                                <option value="Alpa"
+                                                    {{ isset($attendances[$student->id]) && $attendances[$student->id]->status == 'Alpa' ? 'selected' : '' }}>
+                                                    Alpa</option>
+                                                <option value="Sakit"
+                                                    {{ isset($attendances[$student->id]) && $attendances[$student->id]->status == 'Sakit' ? 'selected' : '' }}>
+                                                    Sakit</option>
+                                                <option value="Izin"
+                                                    {{ isset($attendances[$student->id]) && $attendances[$student->id]->status == 'Izin' ? 'selected' : '' }}>
+                                                    Izin</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Simpan Presensi</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // Handle form submission via AJAX
+            $('#attendance-form').on('submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: '{{ route('attendance.store', $learningActivity->id) }}',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Presensi berhasil!',
+                                text: response.message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan!',
+                            text: 'Terjadi kesalahan saat menyimpan data presensi.'
+                        });
+                    }
+                });
+            });
+
+            // Handle date change for attendance filtering
+            $('#attendance_date').on('change', function() {
+                var date = $(this).val();
+                var academicYearId = $('#academic_year_id').val();
+                var learningActivityId = '{{ $learningActivity->id }}';
+
+                Swal.fire({
+                    title: 'Loading...',
+                    text: 'Sedang memuat data presensi...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '{{ route('attendance.filterAttendance') }}',
+                    type: 'GET',
+                    data: {
+                        date: date,
+                        academic_year_id: academicYearId,
+                        learningActivity: learningActivityId
+                    },
+                    success: function(response) {
+                        Swal.close();
+                        var tbody = '';
+                        $.each(response.students, function(index, student) {
+                            var attendanceStatus = response.attendances[student.id] ?
+                                response.attendances[student.id].status : '';
+                            tbody += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${student.full_name}</td>
+                                    <td>
+                                        <select name="attendance[${student.id}]" class="form-control">
+                                            <option value="" ${attendanceStatus == '' ? 'selected' : ''}>Pilih Absensi</option>
+                                            <option value="Hadir" ${attendanceStatus == 'Hadir' ? 'selected' : ''}>Hadir</option>
+                                            <option value="Alpa" ${attendanceStatus == 'Alpa' ? 'selected' : ''}>Alpa</option>
+                                            <option value="Sakit" ${attendanceStatus == 'Sakit' ? 'selected' : ''}>Sakit</option>
+                                            <option value="Izin" ${attendanceStatus == 'Izin' ? 'selected' : ''}>Izin</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        $('tbody').html(tbody);
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Terjadi kesalahan saat mengambil data presensi.'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

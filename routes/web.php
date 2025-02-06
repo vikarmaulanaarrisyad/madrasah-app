@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AttendaceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LearningActivityController;
 use App\Http\Controllers\ParentController;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('auth.login');
+    // return view ('teachers.jurnal.pdf');
 });
 
 Route::group(['middleware' => ['auth']], function () {
@@ -37,5 +39,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/rombel/{learningActivity}/add-student', [LearningActivityController::class, 'addStudent'])->name('rombel.addStudent');
         Route::get('/rombel/rombel-detail/{id}', [LearningActivityController::class, 'detail'])->name('rombel.detail');
         Route::delete('/rombel/{learningActivityId}/removeStudent/{studentId}', [LearningActivityController::class, 'removeStudent'])->name('rombel.removeStudent');
+
+        // Route to show the attendance form for a specific rombel
+        Route::get('/rombel/{id}/attendance', [AttendaceController::class, 'index'])->name('attendance.index');
+        Route::get('/rombel/{id}/attendance', [AttendaceController::class, 'show'])->name('attendance.show');
+        // Route::get('attendance/filter', [AttendaceController::class, 'filterAttendance'])->name('attendance.filter');
+        Route::get('/attendance/filter', [AttendaceController::class, 'filterAttendance'])->name('attendance.filterAttendance');
+        // Route to store or update attendance for a specific rombel (AJAX)
+        Route::post('/rombel/{id}/attendance', [AttendaceController::class, 'store'])->name('attendance.store');
     });
 });

@@ -47,6 +47,7 @@ class LearningActivityController extends Controller
     {
         return '
          <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
+         <a href="' . route('attendance.show', $q->id) . '" class="btn btn-sm btn-warning">Presensi</a>
 
             ';
     }
