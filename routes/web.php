@@ -9,6 +9,7 @@ use App\Http\Controllers\ParentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeachingJournalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -54,5 +55,11 @@ Route::group(['middleware' => ['auth']], function () {
         // Route : Subject / Mata Pelajaran
         Route::get('/subjects/data', [SubjectController::class, 'data'])->name('subjects.data');
         Route::resource('/subjects', SubjectController::class);
+
+        // Route : Journal
+        Route::get('/journals/data', [TeachingJournalController::class, 'data'])->name('journals.data');
+        Route::get('/journals/get-subject', [TeachingJournalController::class, 'getSubject'])->name('journals.get_subject');
+        Route::get('/journals/get-learningactivity', [TeachingJournalController::class, 'getLearningActivity'])->name('journals.get_learning_activity');
+        Route::resource('/journals', TeachingJournalController::class);
     });
 });

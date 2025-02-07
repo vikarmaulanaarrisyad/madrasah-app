@@ -22,14 +22,14 @@
                         Edit Rombongan Belajar
                     </x-slot>
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <div class="form-group">
                                 <label for="name" class="form-label">Nama</label>
                                 <input type="text" name="name" id="name" class="form-control"
                                     value="{{ $learningActivity->name }}" required>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <div class="form-group">
                                 <label for="teacher_id" class="form-label">Guru</label>
                                 <select name="teacher_id" id="teacher_id" class="form-control" required>
@@ -40,6 +40,24 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="curiculum_id" class="form-label">Kurikulum</label>
+                                <select name="curiculum_id" id="curiculum_id" class="form-control" required>
+                                    <option value="" disabled
+                                        {{ is_null($learningActivity->curiculum_id) ? 'selected' : '' }}>
+                                        Pilih kurikulum
+                                    </option>
+                                    @foreach ($curiculums as $curiculum)
+                                        <option value="{{ $curiculum->id }}"
+                                            {{ $learningActivity->curiculum_id == $curiculum->id ? 'selected' : '' }}>
+                                            {{ $curiculum->name ?? '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
                             </div>
                         </div>
                     </div>

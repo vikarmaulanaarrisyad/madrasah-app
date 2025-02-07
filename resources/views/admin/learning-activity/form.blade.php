@@ -21,6 +21,19 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="form-group">
+                <label for="">Kurikulum</label>
+                <select name="curiculum_id" id="curiculum_id" class="form-control">
+                    <option disabled selected>Pilih salah satu</option>
+                    @foreach ($curiculums as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
                 <label for="">Wali Kelas</label>
                 <select name="teacher_id" id="teacher_id" class="form-control">
                     <option disabled selected>Pilih salah satu</option>

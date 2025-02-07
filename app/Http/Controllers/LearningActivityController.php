@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use App\Models\Curiculum;
 use App\Models\LearningActivity;
 use App\Models\Level;
 use App\Models\Student;
@@ -16,22 +17,27 @@ class LearningActivityController extends Controller
     {
         $levels = Level::all();
         $teachers = Teacher::all();
-        return view('admin.learning-activity.index', compact('levels', 'teachers'));
+        $curiculums = Curiculum::all();
+
+        return view('admin.learning-activity.index', compact('levels', 'teachers', 'curiculums'));
     }
 
     public function data()
     {
-        $query = LearningActivity::with('teacher', 'students', 'level', 'academicYear')
+        $query = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')
             ->orderBy('name', 'ASC')
             ->get();
 
         return datatables($query)
             ->addIndexColumn()
+            ->addColumn('name', function ($q) {
+                return $q->level->name . ' ' . $q->name;
+            })
             ->addColumn('teacher_id', function ($q) {
                 return $q->teacher->full_name;
             })
             ->addColumn('curiculum_id', function ($q) {
-                return '';
+                return $q->curiculum->name ?? '<span class="badge badge-warning">Belum disetting kurikulum</span>';
             })
             ->addColumn('number_of_student', function ($q) {
                 return $q->students->count(); // Hitung jumlah siswa dalam rombel
@@ -39,7 +45,7 @@ class LearningActivityController extends Controller
             ->addColumn('aksi', function ($q) {
                 return $this->renderActionButton($q);
             })
-            ->rawColumns(['status', 'aksi'])
+            ->rawColumns(['curiculum_id', 'aksi'])
             ->make(true);
     }
 
@@ -59,6 +65,7 @@ class LearningActivityController extends Controller
         $rules = [
             'teacher_id' => 'required',
             'm_level_id' => 'required',
+            'curiculum_id' => 'required',
             'name' => 'required',
         ];
 
@@ -77,6 +84,7 @@ class LearningActivityController extends Controller
             'm_level_id' => $request->m_level_id,
             'rombel_type_id' => $request->m_level_id,
             'teacher_id' => $request->teacher_id,
+            'curiculum_id' => $request->curiculum_id,
             'name' => $request->name,
         ];
 
@@ -91,14 +99,14 @@ class LearningActivityController extends Controller
 
     public function detail($id)
     {
-        $learningActivity = LearningActivity::with('teacher', 'students', 'level', 'academicYear')->findOrfail($id);
+        $learningActivity = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')->findOrfail($id);
 
         return view('admin.learning-activity.detail', compact('learningActivity'));
     }
 
     public function edit($id)
     {
-        $learningActivity = LearningActivity::with('teacher', 'students', 'level', 'academicYear')->findOrFail($id);
+        $learningActivity = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')->findOrFail($id);
 
         $teachers = Teacher::all(); // Get all teachers for dropdown
         // Get all students who are NOT enrolled in the current learning activity
@@ -106,7 +114,9 @@ class LearningActivityController extends Controller
             $query->where('learning_activity_id', $id);
         })->get();
 
-        return view('admin.learning-activity.edit', compact('learningActivity', 'teachers', 'students'));
+        $curiculums = Curiculum::all();
+
+        return view('admin.learning-activity.edit', compact('learningActivity', 'teachers', 'students', 'curiculums'));
     }
 
 
@@ -114,6 +124,7 @@ class LearningActivityController extends Controller
     {
         $rules = [
             'teacher_id' => 'required',
+            'curiculum_id' => 'required',
             'name' => 'required',
         ];
 
@@ -129,6 +140,7 @@ class LearningActivityController extends Controller
 
         $data = [
             'teacher_id' => $request->teacher_id,
+            'curiculum_id' => $request->curiculum_id,
             'name' => $request->name,
         ];
 

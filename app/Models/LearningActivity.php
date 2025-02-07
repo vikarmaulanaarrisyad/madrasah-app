@@ -28,4 +28,9 @@ class LearningActivity extends Model
     {
         return $this->belongsToMany(Student::class, 'learning_activity_student', 'learning_activity_id', 'student_id')->withTimestamps();
     }
+
+    public function curiculum()
+    {
+        return $this->belongsTo(Curiculum::class);
+    }
 }
