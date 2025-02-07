@@ -90,6 +90,8 @@ class TeacherController extends Controller
                 'password' => Hash::make('password') // Bisa ganti dengan request input
             ]);
 
+            $user->assignRole('Guru');
+
             // Simpan teacher
             Teacher::create([
                 'user_id' => $user->id,

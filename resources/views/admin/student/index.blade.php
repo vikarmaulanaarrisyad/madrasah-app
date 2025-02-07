@@ -22,7 +22,7 @@
                         </a>
 
                         <!-- Tombol Download Template Excel -->
-                        <a href="#" class="btn btn-sm btn-success mb-2 mr-2 ">
+                        {{--  <a href="#" class="btn btn-sm btn-success mb-2 mr-2 ">
                             <i class="fas fa-file-excel"></i> Download Template
                         </a>
 
@@ -30,7 +30,7 @@
                         <button data-toggle="modal" data-target="#uploadExcelModal"
                             class="btn btn-sm btn-warning mb-2 mr-2 ">
                             <i class="fas fa-upload"></i> Upload Excel
-                        </button>
+                        </button>  --}}
                     </div>
 
                 </x-slot>

@@ -147,22 +147,19 @@
                     });
                 },
                 success: function(response) {
-
+                    Swal.close();
                     $(modal).modal('hide');
-
-                    if (response.status === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 3000
-                        }).then(() => {
-                            $(button).prop('disabled', false);
-                            $('#spinner-border').hide();
-                            table.ajax.reload();
-                        });
-                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(() => {
+                        $(button).prop('disabled', false);
+                        $('#spinner-border').hide();
+                        table.ajax.reload();
+                    });
                 },
                 error: function(errors) {
                     Swal.close();
@@ -181,53 +178,6 @@
                 }
             });
 
-        }
-
-        function submitForm1(originalForm) {
-            $(button).prop('disabled', true);
-            $('#spinner-border').show();
-
-            $.post({
-                    url: $(originalForm).attr('action'),
-                    data: new FormData(originalForm),
-                    dataType: 'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false
-                })
-                .done(response => {
-                    $(modal).modal('hide');
-                    if (response.status = 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 3000
-                        }).then(() => {
-                            $(button).prop('disabled', false);
-                            $('#spinner-border').hide();
-
-                            table.ajax.reload();
-                        })
-                    }
-                })
-                .fail(errors => {
-                    $('#spinner-border').hide();
-                    $(button).prop('disabled', false);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Opps! Gagal',
-                        text: errors.responseJSON.message,
-                        showConfirmButton: true,
-                    });
-                    if (errors.status == 422) {
-                        $('#spinner-border').hide()
-                        $(button).prop('disabled', false);
-                        loopErrors(errors.responseJSON.errors);
-                        return;
-                    }
-                });
         }
 
         function updateStatus(id) {

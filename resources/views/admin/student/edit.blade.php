@@ -35,7 +35,7 @@
                         <!-- /.tab-pane -->
 
                         <div class="tab-pane" id="nilai">
-
+                            @include('admin.student.form.siswa-nilai')
                         </div>
                         <!-- /.tab-pane -->
                     </div>

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LearningActivity;
+use App\Models\Student;
+use App\Models\Subject;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,11 +17,16 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('Admin')) {
-            return view('admin.dashboard.index');
+            $teacherCount = Teacher::count();
+            $studentCount = Student::count();
+            $learningActivityCount = LearningActivity::count();
+            $subjectCount = Subject::count();
+
+            return view('admin.dashboard.index', compact('teacherCount', 'studentCount', 'learningActivityCount', 'subjectCount'));
         } else if ($user->hasRole('Kepala')) {
             return view('kepalamadrasah.dashboard.index');
         } else {
-            return view('guru.dashboard.index');
+            return view('teacher.dashboard.index');
         }
     }
 }

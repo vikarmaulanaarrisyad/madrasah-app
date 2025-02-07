@@ -12,11 +12,14 @@
     <div class="row">
         <div class="col-lg-12">
             <x-card>
-                <x-slot name="header">
-                    <button onclick="addForm(`{{ route('journals.store') }}`)" class="btn btn-sm btn-primary ">
-                        <i class="fas fa-plus-circle"></i> Tambah Data
-                    </button>
-                </x-slot>
+                @if (Auth::user()->hasRole('Guru'))
+                    <x-slot name="header">
+                        <button onclick="addForm(`{{ route('journals.store') }}`)" class="btn btn-sm btn-primary ">
+                            <i class="fas fa-plus-circle"></i> Tambah Data
+                        </button>
+
+                    </x-slot>
+                @endif
 
                 <div class="table-responsive">
                     <x-table>
@@ -27,9 +30,10 @@
                             <th>Mata Pelajaran</th>
                             <th>KD/CP</th>
                             <th>Materi</th>
-                            <th>Tugas</th>
                             <th>Keterangan</th>
-                            <th>Aksi</th>
+                            @if (Auth::user()->hasRole('Guru'))
+                                <th>Aksi</th>
+                            @endif
                         </x-slot>
                     </x-table>
                 </div>
@@ -139,25 +143,33 @@
                     data: 'learning_activity'
                 },
                 {
-                    data: 'subject.name'
-                },
-                {
-                    data: 'cp'
-                },
-                {
-                    data: 'material'
-                },
-                {
-                    data: 'task'
-                },
-                {
-                    data: 'notes'
-                },
-                {
-                    data: 'aksi',
+                    data: 'subject.name',
                     orderable: false,
                     searchable: false
                 },
+                {
+                    data: 'cp',
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'material',
+                    orderable: false,
+                    searchable: false
+                },
+
+                {
+                    data: 'notes',
+                    orderable: false,
+                    searchable: false
+                },
+                @if (Auth::user()->hasRole('Guru'))
+                    {
+                        data: 'aksi',
+                        orderable: false,
+                        searchable: false
+                    },
+                @endif
             ]
         });
     </script>

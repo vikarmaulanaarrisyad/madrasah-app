@@ -40,7 +40,7 @@ class TeachingJournalController extends Controller
             ->addColumn('aksi', function ($q) {
                 return $this->renderActionButton($q);
             })
-            ->rawColumns(['aksi', 'material'])
+            ->rawColumns(['aksi', 'material', 'notes', 'taks'])
             ->make(true);
     }
 

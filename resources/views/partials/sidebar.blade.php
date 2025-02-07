@@ -38,68 +38,77 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-header">MASTER DATA</li>
-                <li class="nav-item">
-                    <a href="{{ route('academicyears.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-calendar-alt"></i>
-                        <p>
-                            Tahun Pelajaran
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('curiculums.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-book-open"></i>
-                        <p>Kurikulum</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('subjects.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>Mata Pelajaran</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('teachers.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user-friends"></i>
-                        <p>
-                            Guru
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('students.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-user-graduate"></i>
-                        <p>
-                            Data Siswa
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('rombel.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Rombongan Belajar
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
+                @if (Auth::user()->hasRole('Admin'))
+                    <li class="nav-header">MASTER DATA</li>
+                    <li class="nav-item">
+                        <a href="{{ route('academicyears.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-calendar-alt"></i>
+                            <p>
+                                Tahun Pelajaran
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('curiculums.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-open"></i>
+                            <p>Kurikulum</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('subjects.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Mata Pelajaran</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('teachers.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user-friends"></i>
+                            <p>
+                                Guru
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('students.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-user-graduate"></i>
+                            <p>
+                                Data Siswa
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Guru'))
+                    <li class="nav-item">
+                        <a href="{{ route('rombel.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Rombongan Belajar
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                {{--  <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>
                             Presensi Siswa
                         </p>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('journals.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-book-reader"></i>
-                        <p>
-                            Jurnal Mengajar Guru
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
+                </li>  --}}
+                @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Guru'))
+                    <li class="nav-item">
+                        <a href="{{ route('journals.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-book-reader"></i>
+                            <p>
+                                Jurnal Mengajar Guru
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                {{--  <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-file-alt"></i>
                         <p>Cetak Raport</p>
@@ -111,7 +120,7 @@
                         <i class="nav-icon fas fa-book"></i>
                         <p>Cetak Buku Induk Siswa</p>
                     </a>
-                </li>
+                </li>  --}}
 
             </ul>
         </nav>

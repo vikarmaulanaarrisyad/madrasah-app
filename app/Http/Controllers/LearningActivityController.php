@@ -9,6 +9,7 @@ use App\Models\Level;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class LearningActivityController extends Controller
@@ -51,11 +52,19 @@ class LearningActivityController extends Controller
 
     private function renderActionButton($q)
     {
-        return '
-         <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
-         <a href="' . route('attendance.show', $q->id) . '" class="btn btn-sm btn-warning">Presensi</a>
+        $user = Auth::user(); // Ambil user yang sedang login
 
-            ';
+        // Jika user adalah wali kelas dari learning activity, tampilkan tombol Presensi
+        if ($user->id == $q->teacher_id) {
+            return '
+            <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
+            <a href="' . route('attendance.show', $q->id) . '" class="btn btn-sm btn-warning">Presensi</a>
+        ';
+        } else {
+            return '
+            <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
+        ';
+        }
     }
 
     public function store(Request $request)

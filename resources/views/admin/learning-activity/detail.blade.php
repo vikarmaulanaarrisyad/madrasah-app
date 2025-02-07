@@ -16,8 +16,11 @@
             <x-card>
                 <x-slot name="header">
                     Detail Rombongan Belajar
-                    <a href="{{ route('rombel.edit', $learningActivity->id) }}" class="btn btn-sm btn-primary float-right"><i
-                            class="fas fa-pencil-alt"></i> Edit Rombel</a>
+                    @if (Auth::user()->hasRole('Admin'))
+                        <a href="{{ route('rombel.edit', $learningActivity->id) }}"
+                            class="btn btn-sm btn-primary float-right"><i class="fas fa-pencil-alt"></i> Edit Rombel</a>
+                    @endif
+
                 </x-slot>
                 <div class="row">
                     <div class="col-12 col-sm-3">

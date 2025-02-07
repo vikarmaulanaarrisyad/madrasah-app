@@ -17,9 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('m_level_id');
             $table->unsignedBigInteger('rombel_type_id');
             $table->unsignedBigInteger('teacher_id');
-            $table->integer('absent_number');
             $table->string('name');
-            $table->string('level');
             $table->timestamps();
         });
     }
