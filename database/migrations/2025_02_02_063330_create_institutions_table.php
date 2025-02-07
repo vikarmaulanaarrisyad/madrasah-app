@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('institutions', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
             $table->string('institution_head');
             $table->string('institution_status');
             $table->string('npsn');

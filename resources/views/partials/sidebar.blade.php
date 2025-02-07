@@ -108,6 +108,22 @@
                     </li>
                 @endif
 
+                @if (Auth::user()->hasRole('Admin'))
+                    <li class="nav-header">PENGATURAN</li>
+                    <li class="nav-item">
+                        <a href="{{ route('institution.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-school"></i>
+                            <p>Madrasah</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('settings.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-sliders-h"></i>
+                            <p>Aplikasi</p>
+                        </a>
+                    </li>
+                @endif
+
                 {{--  <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-file-alt"></i>

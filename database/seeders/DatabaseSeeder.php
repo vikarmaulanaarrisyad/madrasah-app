@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             AverageIncomeSeeder::class,
             LifeStatusSeeder::class,
             CuriculumSeeder::class,
+            SubjectSeeder::class,
         ]);
     }
 }

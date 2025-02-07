@@ -4,8 +4,10 @@ use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AttendaceController;
 use App\Http\Controllers\CuriculumController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\LearningActivityController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
@@ -61,5 +63,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/journals/get-subject', [TeachingJournalController::class, 'getSubject'])->name('journals.get_subject');
         Route::get('/journals/get-learningactivity', [TeachingJournalController::class, 'getLearningActivity'])->name('journals.get_learning_activity');
         Route::resource('/journals', TeachingJournalController::class);
+
+        Route::resource('/settings', SettingController::class);
+        Route::resource('/institution', InstitutionController::class);
     });
 });
