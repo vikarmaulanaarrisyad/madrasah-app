@@ -25,8 +25,14 @@
 
                         <div class="form-group">
                             <label for="attendance_date">Pilih Tanggal</label>
-                            <input type="date" id="attendance_date" name="attendance_date" class="form-control"
-                                value="{{ $date }}">
+                            <div class="input-group datepicker" id="attendance_date" data-target-input="nearest">
+                                <input type="text" name="attendance_date" class="form-control datetimepicker-input"
+                                    data-target="#attendance_date" data-toggle="datetimepicker" autocomplete="off"
+                                    placeholder="Masukkan tanggal" value="{{ $date }}" />
+                                <div class="input-group-append" data-target="#attendance_date" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
                         </div>
 
                         <table class="table table-bordered">
@@ -75,10 +81,11 @@
     </div>
 @endsection
 
+@include('includes.datepicker')
+
 @push('scripts')
     <script>
         $(document).ready(function() {
-            // Handle form submission via AJAX
             $('#attendance-form').on('submit', function(e) {
                 e.preventDefault(); // Prevent default form submission
 
@@ -114,10 +121,19 @@
             });
 
             // Handle date change for attendance filtering
-            $('#attendance_date').on('change', function() {
-                var date = $(this).val();
-                var academicYearId = $('#academic_year_id').val();
-                var learningActivityId = '{{ $learningActivity->id }}';
+            $('#attendance_date').on('change.datetimepicker', function() {
+                let date = $(this).find('input').val();
+                let academicYearId = $('#academic_year_id').val();
+                let learningActivityId = '{{ $learningActivity->id }}';
+
+                if (!date) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Tanggal kosong!',
+                        text: 'Silakan pilih tanggal terlebih dahulu.'
+                    });
+                    return;
+                }
 
                 Swal.fire({
                     title: 'Loading...',
@@ -127,6 +143,8 @@
                         Swal.showLoading();
                     }
                 });
+
+
 
                 $.ajax({
                     url: '{{ route('attendance.filterAttendance') }}',

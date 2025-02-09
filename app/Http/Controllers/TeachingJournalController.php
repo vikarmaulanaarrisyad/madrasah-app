@@ -21,7 +21,24 @@ class TeachingJournalController extends Controller
 
     public function data()
     {
-        $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')->orderBy('date', 'DESC')->get();
+        $user = Auth::user();
+
+        if ($user->hasRole('Admin')) {
+            $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')->orderBy('date', 'DESC')->get();
+        } else {
+            // Jika user adalah guru, tampilkan hanya data rombel yang diajar oleh guru tersebut
+            $teacher = Teacher::where('user_id', $user->id)->first();
+            if (!$teacher) {
+                return datatables([])->make(true); // Jika tidak ditemukan sebagai guru, tampilkan kosong
+            }
+
+            $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')
+                ->where('teacher_id', $teacher->id)
+                ->orderBy('date', 'DESC')->get();
+        }
+
+
+
 
         return datatables($query)
             ->addIndexColumn()

@@ -26,11 +26,14 @@
                         <x-slot name="thead">
                             <th>No</th>
                             <th>Tanggal</th>
+                            @if (Auth::user()->hasRole('Admin'))
+                                <th>Nama Guru</th>
+                            @endif
                             <th>Rombel</th>
                             <th>Mata Pelajaran</th>
                             <th>KD/CP</th>
                             <th>Materi</th>
-                            <th>Keterangan</th>
+                            <th>Catatan</th>
                             @if (Auth::user()->hasRole('Guru'))
                                 <th>Aksi</th>
                             @endif
@@ -46,6 +49,17 @@
 @include('includes.datatables')
 @include('includes.datepicker')
 @include('includes.select2')
+
+@push('css')
+    <style>
+        .table td,
+        .table th {
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            max-width: 100px;
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script>
@@ -138,7 +152,11 @@
                 {
                     data: 'date'
                 },
-                {
+                @if (Auth::user()->hasRole('Admin'))
+                    {
+                        data: 'teacher.full_name'
+                    },
+                @endif {
                     data: 'learning_activity'
                 },
                 {

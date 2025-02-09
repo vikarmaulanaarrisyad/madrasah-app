@@ -12,7 +12,7 @@ class AttendaceController extends Controller
 {
     public function index(Request $request, $learningActivityId)
     {
-        $date = $request->query('date', Carbon::today()->format('Y-m-d')); // Ambil tanggal dari query
+        $date = $request->query('date'); // Ambil tanggal dari query
 
         $learningActivity = LearningActivity::with('students')->findOrFail($learningActivityId);
         $academicYears = AcademicYear::all(); // Ambil semua tahun ajaran
@@ -77,7 +77,7 @@ class AttendaceController extends Controller
     public function filterAttendance(Request $request)
     {
         $date = $request->input('date');
-        $academicYearId = $request->input('academic_year_id');
+
         $learningActivityId = $request->input('learningActivity');
 
         // Ambil data aktivitas pembelajaran
