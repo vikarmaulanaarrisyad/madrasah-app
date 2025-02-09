@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
         // Route : Teacher / GTK
         Route::get('/teachers/data', [TeacherController::class, 'data'])->name('teachers.data');
         Route::get('/teachers/export-excel', [TeacherController::class, 'exportExcel'])->name('teachers.export_excel');
+        Route::post('/teachers/import-excel', [TeacherController::class, 'importExcel'])->name('teachers.import_excel');
         Route::resource('/teachers', TeacherController::class);
 
         // Route : Student

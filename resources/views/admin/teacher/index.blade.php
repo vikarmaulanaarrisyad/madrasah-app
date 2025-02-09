@@ -22,7 +22,7 @@
                         <i class="fas fa-file-excel"></i> Export Excel
                     </button>
 
-                    <button class="btn btn-sm btn-warning">
+                    <button onclick="importExcel()" class="btn btn-sm btn-warning">
                         <i class="fas fa-upload"></i> Import Excel
                     </button>
                 </x-slot>
@@ -41,6 +41,7 @@
         </div>
     </div>
     @include('admin.teacher.form')
+    @include('admin.teacher.import-modal')
 @endsection
 
 @include('includes.datatables')
@@ -50,6 +51,7 @@
     <script>
         let table;
         let modal = '#modal-form';
+        let modalImport = '#importExcelModal'
         let statusModal = '#statusModal';
         let button = '#submitBtn';
 
@@ -263,5 +265,11 @@
                 }
             });
         }
+
+        function importExcel() {
+            $(modalImport).modal('show');
+        }
     </script>
 @endpush
+
+

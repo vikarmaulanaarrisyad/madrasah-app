@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\TeacherExport;
+use App\Imports\TeacherImport;
 use App\Models\Gender;
 use App\Models\Religion;
 use App\Models\Teacher;
@@ -220,5 +221,35 @@ class TeacherController extends Controller
     public function exportExcel()
     {
         return Excel::download(new TeacherExport, 'teachers.xlsx');
+    }
+
+    public function importExcel(Request $request)
+    {
+        // Validasi file
+        $validator = Validator::make($request->all(), [
+            'excelFile' => 'required|file|mimes:xlsx,xls|max:2048', // Maks 2MB
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        try {
+            // Proses import menggunakan Laravel Excel
+            Excel::import(new TeacherImport, $request->file('excelFile'), null, \Maatwebsite\Excel\Excel::XLSX);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'File berhasil diupload dan diproses!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengupload file: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
