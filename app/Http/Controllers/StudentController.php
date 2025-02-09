@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StudentExport;
 use App\Models\AverageIncome;
 use App\Models\Education;
 use App\Models\Gender;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -380,13 +382,6 @@ class StudentController extends Controller
         }
     }
 
-    // private function uploadFile(UploadedFile $file, string $path): string
-    // {
-    //     $originalName = $file->getClientOriginalName();
-
-    //     return $file->storeAs($path, $originalName, 'public');
-    // }
-
     private function uploadFile(UploadedFile $file, string $path, string $name): string
     {
         // Gunakan name sebagai nama file, tambahkan ekstensi file asli
@@ -403,5 +398,13 @@ class StudentController extends Controller
         if (Storage::disk('public')->exists($filePath)) {
             Storage::disk('public')->delete($filePath);
         }
+    }
+
+    public function exportExcel()
+    {
+        // Menggunakan format YYYYMMDD_HHMMSS untuk penamaan file
+        $nameFile = 'students_' . now()->format('Ymd_His') . '.xlsx';
+
+        return Excel::download(new StudentExport, $nameFile);
     }
 }

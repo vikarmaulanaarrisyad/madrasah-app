@@ -15,22 +15,19 @@
         <div class="col-lg-12">
             <x-card>
                 <x-slot name="header">
-                    <div class="d-flex flex-wrap justify-content-start">
+                    <div class="">
                         <!-- Tombol Tambah Data -->
-                        <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary mb-2 mr-2 ">
+                        <a href="{{ route('students.create') }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-plus-circle"></i> Tambah Data
                         </a>
 
-                        <!-- Tombol Download Template Excel -->
-                        {{--  <a href="#" class="btn btn-sm btn-success mb-2 mr-2 ">
-                            <i class="fas fa-file-excel"></i> Download Template
-                        </a>
+                        <button onclick="exportExcel()" class="btn btn-sm btn-success">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
 
-                        <!-- Tombol Upload Excel -->
-                        <button data-toggle="modal" data-target="#uploadExcelModal"
-                            class="btn btn-sm btn-warning mb-2 mr-2 ">
-                            <i class="fas fa-upload"></i> Upload Excel
-                        </button>  --}}
+                        <button onclick="importExcel()" class="btn btn-sm btn-warning">
+                            <i class="fas fa-upload"></i> Import Excel
+                        </button>
                     </div>
 
                 </x-slot>
@@ -48,7 +45,7 @@
             </x-card>
         </div>
     </div>
-
+    @include('admin.student.import-modal')
 @endsection
 
 @include('includes.datatables')
@@ -58,6 +55,7 @@
         let table;
         let modal = '#modal-form';
         let statusModal = '#statusModal';
+        let modalImport = '#importExcelModal'
         let button = '#submitBtn';
 
         table = $('.table').DataTable({
@@ -95,5 +93,41 @@
                 },
             ]
         })
+
+        function exportExcel() {
+            Swal.fire({
+                title: 'Export Data?',
+                text: "Apakah Anda ingin mengunduh data siswa dalam format Excel?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Export!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sedang Memproses...',
+                        text: 'Mohon tunggu, file sedang diproses.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Tunggu sebentar sebelum mengalihkan ke halaman export
+                    setTimeout(() => {
+                        window.location.href = "{{ route('students.export_excel') }}";
+                        Swal.close();
+                    }, 1000); // Delay 1 detik agar efek loading terlihat
+                }
+            });
+        }
+
+        function importExcel() {
+            $(modalImport).modal('show');
+        }
     </script>
 @endpush
