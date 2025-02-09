@@ -44,8 +44,7 @@ class TeachingJournalController extends Controller
         return $query;
     }
 
-
-    public function index()
+    public function index1()
     {
         $user = Auth::user();
 
@@ -64,6 +63,39 @@ class TeachingJournalController extends Controller
 
         // Ambil semua mata pelajaran yang sesuai dengan kurikulum rombel
         $subjects = $rombel->curiculum->subjects ?? collect(); // Pastikan tidak error jika null
+
+        return view('admin.teaching-journal.index', compact('subjects'));
+    }
+
+    public function index()
+    {
+        $user = Auth::user();
+
+        // Cek apakah user memiliki role Admin atau Guru
+        if (!$user->hasAnyRole(['Admin', 'Guru'])) {
+            return abort(403, 'Anda tidak memiliki izin untuk mengakses halaman ini.');
+        }
+
+        // Jika Admin, ambil semua data tanpa filter guru
+        if ($user->hasRole('Admin')) {
+            $subjects = Subject::all(); // Admin bisa melihat semua mata pelajaran
+        } else {
+            // Jika Guru, ambil data guru yang login
+            $teacher = Teacher::with(['learningActivities.curiculum.subjects'])
+                ->where('user_id', $user->id)
+                ->first();
+
+            // Cek jika teacher atau rombel tidak ditemukan untuk menghindari error
+            if (!$teacher || $teacher->learningActivities->isEmpty()) {
+                return redirect()->route('dashboard')->with('error', 'Data tidak ditemukan.');
+            }
+
+            // Ambil rombel pertama (jika ada lebih dari satu, sesuaikan kebutuhan)
+            $rombel = $teacher->learningActivities->first();
+
+            // Ambil semua mata pelajaran yang sesuai dengan kurikulum rombel
+            $subjects = $rombel->curiculum->subjects ?? collect();
+        }
 
         return view('admin.teaching-journal.index', compact('subjects'));
     }

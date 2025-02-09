@@ -20,4 +20,9 @@ class Teacher extends Model
     {
         return $this->belongsTo(Gender::class, 'm_gender_id');
     }
+
+    public function religion()
+    {
+        return $this->belongsTo(Religion::class, 'm_religion_id');
+    }
 }

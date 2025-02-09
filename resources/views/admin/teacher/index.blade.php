@@ -17,6 +17,14 @@
                 <x-slot name="header">
                     <button onclick="addForm(`{{ route('teachers.store') }}`)" class="btn btn-sm btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah Data</button>
+
+                    <button onclick="exportExcel()" class="btn btn-sm btn-success">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+
+                    <button class="btn btn-sm btn-warning">
+                        <i class="fas fa-upload"></i> Import Excel
+                    </button>
                 </x-slot>
 
                 <x-table>
@@ -220,6 +228,38 @@
                             });
                         }
                     });
+                }
+            });
+        }
+
+        function exportExcel() {
+            Swal.fire({
+                title: 'Export Data?',
+                text: "Apakah Anda ingin mengunduh data guru dalam format Excel?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Export!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Sedang Memproses...',
+                        text: 'Mohon tunggu, file sedang diproses.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Tunggu sebentar sebelum mengalihkan ke halaman export
+                    setTimeout(() => {
+                        window.location.href = "{{ route('teachers.export_excel') }}";
+                        Swal.close();
+                    }, 1000); // Delay 1 detik agar efek loading terlihat
                 }
             });
         }

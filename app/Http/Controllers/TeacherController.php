@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TeacherExport;
 use App\Models\Gender;
 use App\Models\Religion;
 use App\Models\Teacher;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
 {
@@ -213,5 +215,10 @@ class TeacherController extends Controller
                 'message' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new TeacherExport, 'teachers.xlsx');
     }
 }

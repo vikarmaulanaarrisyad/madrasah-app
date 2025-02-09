@@ -14,21 +14,31 @@
             <x-card>
                 @if (Auth::user()->hasRole('Guru'))
                     <x-slot name="header">
-                        <div class="d-flex align-items-center">
-                            <button onclick="addForm(`{{ route('journals.store') }}`)" class="btn mr-2 btn-sm btn-primary ">
-                                <i class="fas fa-plus-circle"></i> Tambah Data
-                            </button>
-                            <select id="filtersubject" class="form-control w-auto" name="filtersubject">
-                                <option value="">-- Pilih Mata Pelajaran --</option>
-                                @foreach ($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-auto">
+                                <button onclick="addForm(`{{ route('journals.store') }}`)"
+                                    class="btn btn-sm btn-primary w-100">
+                                    <i class="fas fa-plus-circle"></i> Tambah Data
+                                </button>
+                            </div>
 
-                            <button id="downloadPdf" class="btn btn-danger btn-sm ml-2">
-                                <i class="fas fa-file-pdf"></i> Download PDF
-                            </button>
+                            <div class="col-12 col-md-auto mt-3 mb-3">
+                                <select id="filtersubject" class="form-control w-100">
+                                    <option value="">-- Pilih Mata Pelajaran --</option>
+                                    @foreach ($subjects as $subject)
+                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-auto">
+                                <button id="downloadPdf" class="btn btn-danger btn-sm w-100">
+                                    <i class="fas fa-file-pdf"></i> Download PDF
+                                </button>
+                            </div>
                         </div>
+
+
                     </x-slot>
                 @endif
 
@@ -359,6 +369,18 @@
                 return; // Hentikan proses jika tidak ada subjectId
             }
 
+            // Tampilkan SweetAlert Loading
+            Swal.fire({
+                title: 'Sedang memproses...',
+                text: 'Harap tunggu, sedang menyiapkan file PDF.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             $.ajax({
                 url: '{{ route('journals.download_pdf') }}',
                 type: 'GET',
@@ -373,6 +395,8 @@
                             text: response.message,
                         });
                     } else {
+                        // Tutup SweetAlert dan arahkan ke download PDF
+                        Swal.close();
                         window.location.href = '{{ route('journals.download_pdf') }}?subject_id=' +
                             subjectId;
                     }

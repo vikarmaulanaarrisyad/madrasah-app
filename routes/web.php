@@ -15,8 +15,7 @@ use App\Http\Controllers\TeachingJournalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // return view('auth.login');
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::group(['middleware' => ['auth']], function () {
@@ -30,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         // Route : Teacher / GTK
         Route::get('/teachers/data', [TeacherController::class, 'data'])->name('teachers.data');
+        Route::get('/teachers/export-excel', [TeacherController::class, 'exportExcel'])->name('teachers.export_excel');
         Route::resource('/teachers', TeacherController::class);
 
         // Route : Student
