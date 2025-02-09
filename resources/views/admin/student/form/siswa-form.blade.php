@@ -402,7 +402,9 @@
                             title: 'Berhasil!',
                             text: 'Data berhasil disimpan!',
                             showConfirmButton: false,
-                            timer: 2000
+                            timer: 3000
+                        }).then(() => {
+                            window.location.href = '{{ route('students.index') }}';
                         });
                         $('#form-siswa')[0].reset(); // Reset form
                     } else {

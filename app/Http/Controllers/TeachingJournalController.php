@@ -21,19 +21,10 @@ class TeachingJournalController extends Controller
 
     public function data()
     {
-        $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject');
+        $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')->orderBy('date', 'DESC')->get();
 
         return datatables($query)
             ->addIndexColumn()
-            ->editColumn('material', function ($q) {
-                return strip_tags($q->material);
-            })
-            ->editColumn('taks', function ($q) {
-                return strip_tags($q->taks);
-            })
-            ->editColumn('notes', function ($q) {
-                return strip_tags($q->notes);
-            })
             ->addColumn('learning_activity', function ($q) {
                 return $this->renderLearningActivity($q);
             })
@@ -194,7 +185,7 @@ class TeachingJournalController extends Controller
 
 
     // Ambil daftar Learning Activities berdasarkan Tahun Akademik Aktif
-    public function getLearningActivity()
+    public function getLearningActivity1()
     {
         $academicYear = AcademicYear::where('is_active', '1')->first();
         if (!$academicYear) {
@@ -215,6 +206,40 @@ class TeachingJournalController extends Controller
 
         return response()->json($learningActivities);
     }
+
+    public function getLearningActivity()
+    {
+        $user = Auth::user(); // Ambil user yang sedang login
+
+        // Cari Tahun Akademik Aktif
+        $academicYear = AcademicYear::where('is_active', 1)->first();
+        if (!$academicYear) {
+            return response()->json([]);
+        }
+
+        // Ambil data guru berdasarkan user yang sedang login
+        $teacher = Teacher::where('user_id', $user->id)->first();
+        if (!$teacher) {
+            return response()->json([]); // Jika bukan guru, return data kosong
+        }
+
+        // Ambil hanya Learning Activities yang diajar oleh guru tersebut
+        $learningActivities = LearningActivity::where('academic_year_id', $academicYear->id)
+            ->where('teacher_id', $teacher->id) // Filter hanya untuk guru yang sedang login
+            ->with(['level']) // Pastikan relasi level() ada di model
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'level_name' => $item->level->name ?? 'N/A',
+                    'curiculum_id' => $item->curiculum_id // Pastikan ini ada di tabel
+                ];
+            });
+
+        return response()->json($learningActivities);
+    }
+
 
     public function getSubject(Request $request)
     {

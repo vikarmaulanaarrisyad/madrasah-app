@@ -40,7 +40,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="cp">KD/CP</label>
-                <textarea name="cp" id="cp" cols="5" rows="2" class="form-control summernote"></textarea>
+                <textarea name="cp" id="cp" cols="5" rows="2" class="form-control"></textarea>
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="material">Materi</label>
-                <textarea name="material" id="material" cols="5" rows="2" class="form-control summernote"></textarea>
+                <textarea name="material" id="material" cols="5" rows="2" class="form-control"></textarea>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="task">Tugas</label>
-                <textarea name="task" id="task" cols="5" rows="2" class="form-control summernote"></textarea>
+                <textarea name="task" id="task" cols="5" rows="2" class="form-control"></textarea>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="notes">Catatan</label>
-                <textarea name="notes" id="notes" cols="5" rows="2" class="form-control summernote"></textarea>
+                <textarea name="notes" id="notes" cols="5" rows="2" class="form-control"></textarea>
             </div>
         </div>
     </div>

@@ -25,9 +25,25 @@ class LearningActivityController extends Controller
 
     public function data()
     {
-        $query = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')
-            ->orderBy('name', 'ASC')
-            ->get();
+        $user = Auth::user();
+
+        // Jika user adalah admin, tampilkan semua data
+        if ($user->hasRole('Admin')) {
+            $query = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')
+                ->orderBy('name', 'ASC')
+                ->get();
+        } else {
+            // Jika user adalah guru, tampilkan hanya data rombel yang diajar oleh guru tersebut
+            $teacher = Teacher::where('user_id', $user->id)->first();
+            if (!$teacher) {
+                return datatables([])->make(true); // Jika tidak ditemukan sebagai guru, tampilkan kosong
+            }
+
+            $query = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')
+                ->where('teacher_id', $teacher->id)
+                ->orderBy('name', 'ASC')
+                ->get();
+        }
 
         return datatables($query)
             ->addIndexColumn()
@@ -52,17 +68,22 @@ class LearningActivityController extends Controller
 
     private function renderActionButton($q)
     {
-        $user = Auth::user(); // Ambil user yang sedang login
+        $user = Auth::user();
+
+        // Jika user adalah admin, hanya tampilkan tombol Detail
+        if ($user->hasRole('Admin')) {
+            return '
+            <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
+        ';
+        }
+
+        // Jika user adalah guru, ambil data guru berdasarkan user_id
+        $teacher = Teacher::where('user_id', $user->id)->first();
 
         // Jika user adalah wali kelas dari learning activity, tampilkan tombol Presensi
-        if ($user->id == $q->teacher_id) {
+        if ($teacher && $teacher->id == $q->teacher_id) {
             return '
-            <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
             <a href="' . route('attendance.show', $q->id) . '" class="btn btn-sm btn-warning">Presensi</a>
-        ';
-        } else {
-            return '
-            <a href="' . route('rombel.detail', $q->id) . '" class="btn btn-sm btn-primary">Detail</a>
         ';
         }
     }
@@ -115,13 +136,19 @@ class LearningActivityController extends Controller
 
     public function edit($id)
     {
-        $learningActivity = LearningActivity::with('teacher', 'students', 'level', 'academicYear', 'curiculum')->findOrFail($id);
+        $learningActivity = LearningActivity::with('teacher', 'level', 'academicYear', 'curiculum')->findOrFail($id);
 
         $teachers = Teacher::all(); // Get all teachers for dropdown
+
         // Get all students who are NOT enrolled in the current learning activity
-        $students = Student::whereDoesntHave('learningActivities', function ($query) use ($id) {
-            $query->where('learning_activity_id', $id);
+        // $students = Student::whereDoesntHave('learningActivities', function ($query) use ($id) {
+        //     $query->where('learning_activity_id', $id);
+        // })->get();
+
+        $students = Student::whereDoesntHave('learningActivities', function ($query) {
+            $query->whereNotNull('learning_activity_id'); // Pastikan student benar-benar tidak punya rombel lain
         })->get();
+
 
         $curiculums = Curiculum::all();
 

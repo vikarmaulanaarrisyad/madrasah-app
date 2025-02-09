@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Kurikulum')
+@section('title', 'Daftar Jurnal Mengajar')
 
 @section('breadcrumb')
     @parent
     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Kurikulum</li>
+    <li class="breadcrumb-item active">Jurnal Mengajar</li>
 @endsection
 
 @section('content')
@@ -46,7 +46,6 @@
 @include('includes.datatables')
 @include('includes.datepicker')
 @include('includes.select2')
-@include('includes.summernote')
 
 @push('scripts')
     <script>
@@ -179,7 +178,7 @@
         let statusModal = '#statusModal';
         let button = '#submitBtn';
 
-        function addForm(url, title = 'Tambah Kurikulum') {
+        function addForm(url, title = 'Tambah Jurnal Mengajar') {
             $(modal).modal('show');
             $(`${modal} .modal-title`).text(title);
             $(`${modal} form`).attr('action', url);
@@ -188,7 +187,7 @@
             resetForm(`${modal} form`);
         }
 
-        function editForm(url, title = 'Edit Kurikulum') {
+        function editForm(url, title = 'Edit Jurnal Mengajar') {
             $.get(url)
                 .done(response => {
                     $(modal).modal('show');
