@@ -8,37 +8,69 @@ use App\Models\LearningActivity;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\TeachingJournal;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TeachingJournalController extends Controller
 {
-    public function index()
-    {
-        return view('admin.teaching-journal.index');
-    }
-
-    public function data()
+    private function getTeachingJournalData(Request $request)
     {
         $user = Auth::user();
 
         if ($user->hasRole('Admin')) {
-            $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')->orderBy('date', 'DESC')->get();
+            $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')
+                ->when($request->has('subject_id') && $request->subject_id != "", function ($query) use ($request) {
+                    $query->where('subject_id', $request->subject_id);
+                })
+                ->orderBy('date', 'DESC')
+                ->get();
         } else {
-            // Jika user adalah guru, tampilkan hanya data rombel yang diajar oleh guru tersebut
             $teacher = Teacher::where('user_id', $user->id)->first();
             if (!$teacher) {
-                return datatables([])->make(true); // Jika tidak ditemukan sebagai guru, tampilkan kosong
+                return collect([]); // Jika tidak ditemukan sebagai guru, kembalikan koleksi kosong
             }
 
             $query = TeachingJournal::with('teacher', 'learning_activity.level', 'subject')
+                ->when($request->has('subject_id') && $request->subject_id != "", function ($query) use ($request) {
+                    $query->where('subject_id', $request->subject_id);
+                })
                 ->where('teacher_id', $teacher->id)
-                ->orderBy('date', 'DESC')->get();
+                ->orderBy('date', 'DESC')
+                ->get();
         }
 
+        return $query;
+    }
 
 
+    public function index()
+    {
+        $user = Auth::user();
+
+        // Ambil data guru beserta relasi ke LearningActivity dan Subjects dalam satu query
+        $teacher = Teacher::with(['learningActivities.curiculum.subjects'])
+            ->where('user_id', $user->id)
+            ->first();
+
+        // Cek jika teacher atau rombel tidak ditemukan untuk menghindari error
+        if (!$teacher || $teacher->learningActivities->isEmpty()) {
+            return redirect()->route('dashboard');
+        }
+
+        // Ambil rombel pertama (jika ada lebih dari satu, sesuaikan kebutuhan)
+        $rombel = $teacher->learningActivities->first();
+
+        // Ambil semua mata pelajaran yang sesuai dengan kurikulum rombel
+        $subjects = $rombel->curiculum->subjects ?? collect(); // Pastikan tidak error jika null
+
+        return view('admin.teaching-journal.index', compact('subjects'));
+    }
+
+    public function data(Request $request)
+    {
+        $query = $this->getTeachingJournalData($request);
 
         return datatables($query)
             ->addIndexColumn()
@@ -51,6 +83,7 @@ class TeachingJournalController extends Controller
             ->rawColumns(['aksi', 'material', 'notes', 'taks'])
             ->make(true);
     }
+
 
     private function renderLearningActivity($q)
     {
@@ -200,30 +233,6 @@ class TeachingJournalController extends Controller
         ], 200);
     }
 
-
-    // Ambil daftar Learning Activities berdasarkan Tahun Akademik Aktif
-    public function getLearningActivity1()
-    {
-        $academicYear = AcademicYear::where('is_active', '1')->first();
-        if (!$academicYear) {
-            return response()->json([]);
-        }
-
-        $learningActivities = LearningActivity::where('academic_year_id', $academicYear->id)
-            ->with(['level']) // Pastikan relasi level() ada di model
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'level_name' => $item->level->name ?? 'N/A',
-                    'curiculum_id' => $item->curiculum_id // Pastikan ini ada di tabel
-                ];
-            });
-
-        return response()->json($learningActivities);
-    }
-
     public function getLearningActivity()
     {
         $user = Auth::user(); // Ambil user yang sedang login
@@ -282,5 +291,25 @@ class TeachingJournalController extends Controller
         });
 
         return response()->json($formattedSubjects);
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $query = $this->getTeachingJournalData($request);
+
+        if ($query->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan untuk mata pelajaran yang dipilih.'
+            ], 403);
+        }
+
+        // Buat PDF dengan ukuran A4 dan margin 1 inci
+        $pdf = Pdf::loadView('admin.teaching-journal.pdf', ['journals' => $query])
+            ->setPaper('a4', 'portrait')
+            ->set_option('isPhpEnabled', true);; // Atur ukuran kertas A4, orientasi portrait
+
+        // Menampilkan PDF di browser tanpa mengunduhnya langsung
+        return $pdf->stream('teaching-journal.pdf');
     }
 }

@@ -15,8 +15,8 @@ use App\Http\Controllers\TeachingJournalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('auth.login');
-    // return view ('teachers.jurnal.pdf');
+    // return view('auth.login');
+    return view('welcome');
 });
 
 Route::group(['middleware' => ['auth']], function () {
@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/journals/data', [TeachingJournalController::class, 'data'])->name('journals.data');
         Route::get('/journals/get-subject', [TeachingJournalController::class, 'getSubject'])->name('journals.get_subject');
         Route::get('/journals/get-learningactivity', [TeachingJournalController::class, 'getLearningActivity'])->name('journals.get_learning_activity');
+        Route::get('/journals/download-pdf', [TeachingJournalController::class, 'exportPDF'])->name('journals.download_pdf');
         Route::resource('/journals', TeachingJournalController::class);
 
         Route::resource('/settings', SettingController::class);

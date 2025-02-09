@@ -14,10 +14,21 @@
             <x-card>
                 @if (Auth::user()->hasRole('Guru'))
                     <x-slot name="header">
-                        <button onclick="addForm(`{{ route('journals.store') }}`)" class="btn btn-sm btn-primary ">
-                            <i class="fas fa-plus-circle"></i> Tambah Data
-                        </button>
+                        <div class="d-flex align-items-center">
+                            <button onclick="addForm(`{{ route('journals.store') }}`)" class="btn mr-2 btn-sm btn-primary ">
+                                <i class="fas fa-plus-circle"></i> Tambah Data
+                            </button>
+                            <select id="filtersubject" class="form-control w-auto" name="filtersubject">
+                                <option value="">-- Pilih Mata Pelajaran --</option>
+                                @foreach ($subjects as $subject)
+                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                @endforeach
+                            </select>
 
+                            <button id="downloadPdf" class="btn btn-danger btn-sm ml-2">
+                                <i class="fas fa-file-pdf"></i> Download PDF
+                            </button>
+                        </div>
                     </x-slot>
                 @endif
 
@@ -143,6 +154,9 @@
             responsive: true,
             ajax: {
                 url: '{{ route('journals.data') }}',
+                data: function(d) {
+                    d.subject_id = $('#filtersubject').val();
+                }
             },
             columns: [{
                     data: 'DT_RowIndex',
@@ -325,5 +339,52 @@
                     }
                 });
         }
+
+        // Event listener untuk perubahan dropdown
+        $('#filtersubject').change(function() {
+            table.ajax.reload(); // Reload DataTable
+        });
+    </script>
+    <script>
+        $('#downloadPdf').on('click', function() {
+            let subjectId = $('#filtersubject').val(); // Ambil ID mata pelajaran dari filter
+
+            if (!subjectId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan!',
+                    text: 'Silakan pilih mata pelajaran sebelum mendownload PDF.',
+                    confirmButtonColor: '#d33',
+                });
+                return; // Hentikan proses jika tidak ada subjectId
+            }
+
+            $.ajax({
+                url: '{{ route('journals.download_pdf') }}',
+                type: 'GET',
+                data: {
+                    subject_id: subjectId
+                },
+                success: function(response) {
+                    if (response.status == 403) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops!',
+                            text: response.message,
+                        });
+                    } else {
+                        window.location.href = '{{ route('journals.download_pdf') }}?subject_id=' +
+                            subjectId;
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Terjadi kesalahan, silakan coba lagi.',
+                    });
+                }
+            });
+        });
     </script>
 @endpush
