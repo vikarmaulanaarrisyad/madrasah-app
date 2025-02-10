@@ -109,6 +109,19 @@
                 @endif
 
                 @if (Auth::user()->hasRole('Admin'))
+                    {{--  <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file-alt"></i>
+                            <p>Cetak Raport</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>Cetak Buku Induk Siswa</p>
+                        </a>
+                    </li>  --}}
                     <li class="nav-header">PENGATURAN</li>
                     <li class="nav-item">
                         <a href="{{ route('institution.index') }}" class="nav-link">
@@ -124,19 +137,7 @@
                     </li>
                 @endif
 
-                {{--  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <p>Cetak Raport</p>
-                    </a>
-                </li>
 
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>Cetak Buku Induk Siswa</p>
-                    </a>
-                </li>  --}}
 
             </ul>
         </nav>

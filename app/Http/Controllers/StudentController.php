@@ -17,6 +17,7 @@ use App\Models\ResidenceStatus;
 use App\Models\Student;
 use App\Models\Time;
 use App\Models\Transportation;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,9 @@ class StudentController extends Controller
     private function renderActionButton($q)
     {
         return '
-         <a href="' . route('students.edit', $q->id) . '" class="btn btn-sm btn-primary" title="Edit">Lihat Detail</a>';
+         <a href="' . route('students.edit', $q->id) . '" class="btn btn-sm btn-primary" title="Edit">Lihat Detail</a>
+         <a target="_blank" href="' . route('students.print_induk', $q->id) . '" class="btn btn-sm btn-warning">Cetak Induk</a>
+         ';
     }
 
     public function create()
@@ -406,5 +409,30 @@ class StudentController extends Controller
         $nameFile = 'students_' . now()->format('Ymd_His') . '.xlsx';
 
         return Excel::download(new StudentExport, $nameFile);
+    }
+
+    public function printInduk($id)
+    {
+        $query = Student::with([
+            'gender',
+            'religion',
+            'parent',
+            'hobby',
+            'lifeGoal',
+            'residenceDistance',
+            'residenceStatus',
+            'time',
+            'transportation',
+            'learningActivities.level'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView('admin.student.induk.pdf', ['student' => $query])
+            ->setPaper('folio', 'portrait')
+            ->set_option('isHtml5ParserEnabled', true)
+            ->set_option('isRemoteEnabled', true)
+            ->set_option('isPhpEnabled', true);
+
+        // Menampilkan PDF di browser tanpa mengunduhnya langsung
+        return $pdf->stream('teaching-journal.pdf');
     }
 }

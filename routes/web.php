@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/students/data', [StudentController::class, 'data'])->name('students.data');
         Route::get('/students/export-excel', [StudentController::class, 'exportExcel'])->name('students.export_excel');
         Route::post('/students/import-excel', [StudentController::class, 'importExcel'])->name('students.import_excel');
+        Route::get('/students/print-induk/{id}', [StudentController::class, 'printInduk'])->name('students.print_induk');
         Route::resource('/students', StudentController::class);
 
         Route::post('/parents', [ParentController::class, 'store'])->name('parents.store');
