@@ -290,7 +290,7 @@ class ParentController extends Controller
 
             // Use updateOrCreate to either update or create the parent data
             $parent = Parents::updateOrCreate(
-                ['student_id' => $request->student_id], // condition to check for existing record
+                ['student_id' => $student->id], // condition to check for existing record
                 [
                     'father_m_life_status_id'   => $request->father_m_life_status_id,
                     'father_m_last_education_id'   => $request->father_m_last_education_id,

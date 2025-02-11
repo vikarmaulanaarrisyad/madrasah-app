@@ -18,7 +18,7 @@ class Student extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Parents::class, 'student_id', 'id');
+        return $this->hasOne(Parents::class);
     }
 
     // Relationship with Hobby

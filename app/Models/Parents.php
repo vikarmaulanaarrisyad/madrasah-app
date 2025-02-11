@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Parents extends Model
 {
-    // protected $table = 'parents';
+    protected $table = 'parents';
 
     // Relationship with Job
     public function job_father()

@@ -39,6 +39,8 @@
                         <th>Tempat Lahir</th>
                         <th>Tanggal Lahir</th>
                         <th>Jenis Kelamin</th>
+                        <th>Rombel</th>
+                        <th>Induk</th>
                         <th>Aksi</th>
                     </x-slot>
                 </x-table>
@@ -84,7 +86,15 @@
                 {
                     data: 'gender.name'
                 },
-
+                {
+                    data: 'rombel'
+                },
+                {
+                    data: 'induk',
+                    name: 'induk',
+                    orderable: false,
+                    searchable: false
+                },
                 {
                     data: 'aksi',
                     name: 'aksi',

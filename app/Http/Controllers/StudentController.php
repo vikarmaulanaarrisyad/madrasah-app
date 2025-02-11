@@ -35,22 +35,44 @@ class StudentController extends Controller
 
     public function data()
     {
-        $query = Student::with('gender')->get();
+        $query = Student::with(['gender', 'learningActivities.level'])
+            ->orderBy('full_name', 'ASC');
 
         return datatables($query)
             ->addIndexColumn()
+            ->addColumn('rombel', function ($q) {
+                return $this->renderRombel($q);
+            })
+            ->addColumn('induk', function ($q) {
+                return $this->renderActionButtonCetak($q);
+            })
             ->addColumn('aksi', function ($q) {
                 return $this->renderActionButton($q);
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi', 'induk'])
             ->make(true);
+    }
+
+    private function renderRombel($q)
+    {
+        return $q->learningActivities->isNotEmpty()
+            ? $q->learningActivities->map(function ($activity) {
+                return optional($activity->level)->name . ' ' . $activity->name;
+            })->filter()->implode(', ')
+            : '-';
+    }
+
+    private function renderActionButtonCetak($q)
+    {
+        return '
+         <a target="_blank" href="' . route('students.print_induk', $q->id) . '" class="btn btn-sm btn-warning"><i class="fas fa-print"></i></a>
+         ';
     }
 
     private function renderActionButton($q)
     {
         return '
-         <a href="' . route('students.edit', $q->id) . '" class="btn btn-sm btn-primary" title="Edit">Lihat Detail</a>
-         <a target="_blank" href="' . route('students.print_induk', $q->id) . '" class="btn btn-sm btn-warning">Cetak Induk</a>
+         <a href="' . route('students.edit', $q->id) . '" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
          ';
     }
 
@@ -425,7 +447,6 @@ class StudentController extends Controller
             'transportation',
             'learningActivities.level'
         ])->findOrFail($id);
-
         $pdf = Pdf::loadView('admin.student.induk.pdf', ['student' => $query])
             ->setPaper('folio', 'portrait')
             ->set_option('isHtml5ParserEnabled', true)
