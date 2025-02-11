@@ -109,6 +109,13 @@ class LearningActivityController extends Controller
             ], 422);
         }
 
+        if (!$academicYear) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Tahun pelajaran tidak aktif.',
+            ], 422);
+        }
+
         $data = [
             'academic_year_id' => $academicYear->id,
             'm_level_id' => $request->m_level_id,

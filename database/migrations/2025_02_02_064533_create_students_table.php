@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('birth_place');
             $table->date('birth_date');
-            $table->string('nik');
-            $table->string('nisn');
-            $table->string('local_nis');
+            $table->string('nik')->nullable();
+            $table->string('nisn')->nullable();
+            $table->string('local_nis')->nullable();
             $table->unsignedBigInteger('m_gender_id');
             $table->unsignedBigInteger('m_religion_id');
             $table->unsignedBigInteger('m_life_goal_id');
@@ -29,9 +29,11 @@ return new class extends Migration
             $table->unsignedBigInteger('m_transportation_id');
             $table->text('address')->nullable();
             $table->text('full_address')->nullable();
-            $table->string('rt');
-            $table->string('rw');
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
             $table->integer('postal_code_num')->default(0);
+            $table->integer('height')->default(0);
+            $table->integer('weight')->default(0);
             $table->integer('child_of_num')->default(0);
             $table->integer('siblings_num')->default(0);
             $table->integer('entered_tk_ra')->default(0);

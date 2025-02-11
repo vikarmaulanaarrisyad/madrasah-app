@@ -234,12 +234,12 @@
         <tr>
             <td>11. Tinggi Badan (cm)</td>
             <td>:</td>
-            <td>1</td>
+            <td>{{ $student->height ?? '-' }} cm</td>
         </tr>
         <tr>
             <td>12. Berat Badan (kg)</td>
             <td>:</td>
-            <td>2</td>
+            <td>{{ $student->weight ?? '-' }} kg</td>
         </tr>
     </table>
 

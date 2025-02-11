@@ -232,14 +232,28 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="height" class="form-label">Tinggi Badan (Cm)</label>
+                <input type="number" name="height" class="form-control"
+                    value="{{ old('height', $student->height) }}">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="weight" class="form-label">Berat Badan (Kg)</label>
+                <input type="number" name="weight" class="form-control"
+                    value="{{ old('weight', $student->weight) }}">
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="form-group">
                 <label for="postal_code_num" class="form-label">Kode Pos</label>
                 <input type="number" name="postal_code_num" class="form-control"
                     value="{{ old('postal_code_num', $student->postal_code_num) }}">
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div class="form-group">
                 <label for="sekolah_sebelumnya" class="form-label">Sekolah Sebelumnya</label>
                 <div class="form-check">
