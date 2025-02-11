@@ -106,6 +106,12 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('report-attendace.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-print"></i>
+                            <p>Cetak Absensi Siswa</p>
+                        </a>
+                    </li>
                 @endif
 
                 @if (Auth::user()->hasRole('Admin'))

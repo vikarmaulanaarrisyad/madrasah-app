@@ -98,4 +98,9 @@ class AttendaceController extends Controller
             'attendances' => $attendances
         ]);
     }
+
+    public function cetakAttendace()
+    {
+        return 'Ok';
+    }
 }

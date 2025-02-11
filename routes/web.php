@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\LearningActivityController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\ReportAttendaceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -71,5 +72,11 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::resource('/settings', SettingController::class);
         Route::resource('/institution', InstitutionController::class);
+
+        // Route : cetak attancde
+        // Route::get('/report-attendace/data', [ReportAttendaceController::class, 'data'])->name('report.attendace_data');
+        Route::get('/report-attendace/filter', [ReportAttendaceController::class, 'filterPresensi'])->name('presensi.filter');
+        Route::get('/report-attendace/download', [ReportAttendaceController::class, 'downloadPdf'])->name('presensi.download');
+        Route::resource('/report-attendace', ReportAttendaceController::class);
     });
 });
