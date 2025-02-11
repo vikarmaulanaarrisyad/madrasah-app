@@ -31,6 +31,8 @@ class TeacherImport implements ToModel, WithHeadingRow
                 'password' => Hash::make('password123'), // Set default password
             ]);
 
+            $user->assignRole('Guru');
+
             // Cek apakah Gender sudah ada berdasarkan nama
             $gender = Gender::firstOrCreate(['name' => $row['jenis_kelamin']]);
 

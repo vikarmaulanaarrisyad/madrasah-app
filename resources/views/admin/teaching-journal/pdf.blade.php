@@ -107,7 +107,8 @@
                 </td>
                 <td style="text-align: center; width: 50%; border:none;">
                     <p>Tarub, {{ tanggal_indonesia(now()) }}</p>
-                    <p style="margin-bottom:70px">Guru</p>
+                    <p style="margin-bottom:70px">Guru
+                        {{ $journals->first()->teacher->learningActivities->first()->level->name }}</p>
                     <p class="text-bold">{{ $journals->first()->teacher->full_name ?? '____________________' }}</p>
                 </td>
             </tr>

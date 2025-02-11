@@ -97,6 +97,7 @@ class TeachingJournalController extends Controller
             $subjects = $rombel->curiculum->subjects ?? collect();
         }
 
+
         return view('admin.teaching-journal.index', compact('subjects'));
     }
 

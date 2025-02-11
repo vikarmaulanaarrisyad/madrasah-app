@@ -8,7 +8,7 @@ class Curiculum extends Model
 
     public function subjects()
     {
-        return $this->hasMany(Subject::class, 'subject_id', 'id');
+        return $this->hasMany(Subject::class);
     }
 
     public function subject()

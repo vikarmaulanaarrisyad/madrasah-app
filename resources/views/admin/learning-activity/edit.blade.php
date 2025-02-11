@@ -36,7 +36,7 @@
                                     @foreach ($teachers as $teacher)
                                         <option value="{{ $teacher->id }}"
                                             {{ isset($learningActivity->teacher_id) && $learningActivity->teacher_id == $teacher->id ? 'selected' : '' }}>
-                                            {{ $learningActivity->teacher->full_name }}
+                                            {{ $teacher->full_name }}
                                         </option>
                                     @endforeach
                                 </select>
