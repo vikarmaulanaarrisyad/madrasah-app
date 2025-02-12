@@ -48,6 +48,8 @@
     <!-- ///////////// Js Files ////////////////////  -->
     <!-- Jquery -->
     <script src="{{ asset('templates') }}/assets/js/lib/jquery-3.4.1.min.js"></script>
+    <!-- jQuery -->
+    <script src="{{ asset('/AdminLTE/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap-->
     <script src="{{ asset('templates') }}/assets/js/lib/popper.min.js"></script>
     <script src="{{ asset('templates') }}/assets/js/lib/bootstrap.min.js"></script>
@@ -65,6 +67,7 @@
     <script src="{{ asset('templates') }}/assets/js/base.js"></script>
     <!-- sweetalert2 -->
     <script src="{{ asset('/AdminLTE/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('/js/custom.js') }}"></script>
     @stack('scripts_vendor')
 
     <script>

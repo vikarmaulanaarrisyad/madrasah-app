@@ -23,7 +23,7 @@ class AttendaceTeacherController extends Controller
         $absenHariIni = AttendaceTeacher::where('teacher_id', $teacher->id)
             ->where('tgl_presensi', $tglPresensi)
             ->count();
-        return view('teacher.attendace.index', compact('absenHariIni'));
+        return view('teacher.attendance.index', compact('absenHariIni'));
     }
 
     public function store1(Request $request)

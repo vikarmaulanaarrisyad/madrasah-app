@@ -14,6 +14,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TeacherJournalController;
 use App\Http\Controllers\TeachingJournalController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,13 +66,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/subjects/data', [SubjectController::class, 'data'])->name('subjects.data');
         Route::resource('/subjects', SubjectController::class);
 
-        // Route : Journal
-        Route::get('/journals/data', [TeachingJournalController::class, 'data'])->name('journals.data');
-        Route::get('/journals/get-subject', [TeachingJournalController::class, 'getSubject'])->name('journals.get_subject');
-        Route::get('/journals/get-learningactivity', [TeachingJournalController::class, 'getLearningActivity'])->name('journals.get_learning_activity');
-        Route::get('/journals/download-pdf', [TeachingJournalController::class, 'exportPDF'])->name('journals.download_pdf');
-        Route::resource('/journals', TeachingJournalController::class);
-
         Route::resource('/settings', SettingController::class);
         Route::resource('/institution', InstitutionController::class);
 
@@ -81,6 +75,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('/report-attendace', ReportAttendaceController::class);
     });
 
+    // Route : Journal
+    Route::get('/journals/data', [TeachingJournalController::class, 'data'])->name('journals.data');
+    Route::get('/journals/get-subject', [TeachingJournalController::class, 'getSubject'])->name('journals.get_subject');
+    Route::get('/journals/get-learningactivity', [TeachingJournalController::class, 'getLearningActivity'])->name('journals.get_learning_activity');
+    Route::get('/journals/download-pdf', [TeachingJournalController::class, 'exportPDF'])->name('journals.download_pdf');
+    Route::resource('/journals', TeachingJournalController::class);
+
     Route::group(['middleware' => ['role:Guru']], function () {
         Route::get('/presensi/create', [AttendaceTeacherController::class, 'create'])->name('attendace.teacher_create');
         Route::post('/presensi/store', [AttendaceTeacherController::class, 'store'])->name('attendace.teacher_store');
@@ -88,5 +89,8 @@ Route::group(['middleware' => ['auth']], function () {
         // Presensi Siswa
         route::get('/presensi/siswa', [AttendaceStudentController::class, 'index'])->name('attandace.student_index');
         route::post('/presensi/siswa/store', [AttendaceStudentController::class, 'store'])->name('attandance.student_store');
+
+        // Jurnal
+        route::get('/jurnal', [TeacherJournalController::class, 'index'])->name('teacher.journal_index');
     });
 });
