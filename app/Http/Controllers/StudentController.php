@@ -421,7 +421,6 @@ class StudentController extends Controller
         return $file->storeAs($path, $newFileName, 'public');
     }
 
-
     private function deleteFileIfExists(string $filePath)
     {
         if (Storage::disk('public')->exists($filePath)) {

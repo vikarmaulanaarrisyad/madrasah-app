@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendaceTeacher;
 use App\Models\LearningActivity;
 use App\Models\Student;
 use App\Models\Subject;
@@ -26,7 +27,23 @@ class DashboardController extends Controller
         } else if ($user->hasRole('Kepala')) {
             return view('kepalamadrasah.dashboard.index');
         } else {
-            return view('teacher.dashboard.index');
+            $tglIni = date('Y-m-d');
+            $bulanIni = date('m'); // Mendapatkan bulan saat ini
+            $tahunIni = date('Y'); // Mendapatkan tahun saat ini
+
+            $teacher = Teacher::where('user_id', $user->id)->first();
+
+            $presensiHariIni = AttendaceTeacher::where('teacher_id', $teacher->id)
+                ->where('tgl_presensi', $tglIni)
+                ->first();
+
+            $historyBulanIni = AttendaceTeacher::where('teacher_id', $teacher->id)
+                ->whereMonth('tgl_presensi', $bulanIni)
+                ->whereYear('tgl_presensi', $tahunIni)
+                ->orderBy('tgl_presensi', 'desc')
+                ->get();
+
+            return view('teacher.dashboard.index', compact('presensiHariIni', 'historyBulanIni'));
         }
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AttendaceController;
+use App\Http\Controllers\AttendaceTeacherController;
 use App\Http\Controllers\CuriculumController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstitutionController;
@@ -23,7 +24,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route : Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::group(['midleware' => ['role:Admin|Kepala']], function () {
+    Route::group(['midleware' => ['role:Admin']], function () {
         Route::get('/academicyears/data', [AcademicYearController::class, 'data'])->name('academicyears.data');
         Route::resource('/academicyears', AcademicYearController::class);
         Route::put('/academicyears/{id}/update-status', [AcademicYearController::class, 'updateStatus'])->name('academicyears.updateStatus');
@@ -73,10 +74,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('/settings', SettingController::class);
         Route::resource('/institution', InstitutionController::class);
 
-        // Route : cetak attancde
         // Route::get('/report-attendace/data', [ReportAttendaceController::class, 'data'])->name('report.attendace_data');
         Route::get('/report-attendace/filter', [ReportAttendaceController::class, 'filterPresensi'])->name('presensi.filter');
         Route::get('/report-attendace/download', [ReportAttendaceController::class, 'downloadPdf'])->name('presensi.download');
         Route::resource('/report-attendace', ReportAttendaceController::class);
+    });
+
+    Route::group(['middleware' => ['role:Guru']], function () {
+        Route::get('/presensi/create', [AttendaceTeacherController::class, 'create'])->name('attendace.teacher_create');
+        Route::post('/presensi/store', [AttendaceTeacherController::class, 'store'])->name('attendace.teacher_store');
     });
 });
