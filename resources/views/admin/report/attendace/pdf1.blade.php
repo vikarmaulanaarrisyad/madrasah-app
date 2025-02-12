@@ -67,27 +67,26 @@
         TAHUN PELAJARAN {{ $academicYear->name }}
     </div>
     <br><br>
-
-    <table style="margin-top: 10px; width: 100%; border: none;">
+    <table width="100%" style="mt-3">
         <tr style="border: none">
             <td style="text-align: left; border:none;"><strong>Kelas/Semester :</strong> {{ $kelas->level->name }} /
-                {{ $academicYear->semester }}</td>
-            <td style="text-align: right; border:none;"><strong>Bulan:</strong> {{ $namaBulan }}</td>
+                {{ $academicYear->semester }} </td>
+            <td style="text-align: right; border:none; margin-left:2px;"><strong>Bulan:</strong> {{ $namaBulan }}</td>
         </tr>
     </table>
+
 
     <table>
         <thead>
             <tr>
                 <th rowspan="2">No</th>
-                <th rowspan="2">NIS</th>
                 <th rowspan="2">NISN</th>
                 <th rowspan="2">Nama</th>
-                <th colspan="{{ $data[array_key_first($data)]['jumlahHari'] }}">Tanggal</th>
+                <th colspan="{{ $jumlahHari }}">Tanggal</th>
                 <th colspan="4">Jumlah</th>
             </tr>
             <tr>
-                @for ($i = 1; $i <= $data[array_key_first($data)]['jumlahHari']; $i++)
+                @for ($i = 1; $i <= $jumlahHari; $i++)
                     <th>{{ $i }}</th>
                 @endfor
                 <th>H</th>
@@ -98,53 +97,60 @@
         </thead>
         <tbody>
             @php
-                $totalHadir = $totalSakit = $totalIzin = $totalAlpha = 0;
-                $totalHari = $data[array_key_first($data)]['jumlahHari'] * count($data);
+                $totalSakit = 0;
+                $totalIzin = 0;
+                $totalAlpha = 0;
+                $totalHari = $jumlahHari; // Sesuaikan jumlah hari dalam bulan
+                $institution = \App\Models\Institution::first();
             @endphp
 
-            @foreach ($data as $nisn => $siswa)
+            @foreach ($data as $namaSiswa => $statusHarian)
                 @php
-                    $hadir = $izin = $sakit = $alpha = 0;
+                    $hadir = 0;
+                    $izin = 0;
+                    $sakit = 0;
+                    $alpha = 0;
                 @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $siswa['nis'] }}</td>
-                    <td>{{ $siswa['nisn'] }}</td>
-                    <td>{{ $siswa['nama'] }}</td>
-
-                    @for ($i = 1; $i <= $siswa['jumlahHari']; $i++)
+                    <td>{{ $statusHarian['nisn'] }}</td>
+                    <td>{{ $namaSiswa }}</td>
+                    @for ($i = 1; $i <= $jumlahHari; $i++)
                         @php
-                            $status = $siswa['kehadiran'][$i] ?? '-';
+                            $status = $statusHarian[$i] ?? '-';
                             if ($status === 'H') {
                                 $hadir++;
-                                $totalHadir++;
-                            } elseif ($status === 'I') {
+                            }
+                            if ($status === 'I') {
                                 $izin++;
-                                $totalIzin++;
-                            } elseif ($status === 'S') {
+                            }
+                            if ($status === 'S') {
                                 $sakit++;
-                                $totalSakit++;
-                            } elseif ($status === 'A') {
+                            }
+                            if ($status === 'A') {
                                 $alpha++;
-                                $totalAlpha++;
                             }
                         @endphp
                         <td>{{ $status }}</td>
                     @endfor
-
                     <td>{{ $hadir }}</td>
                     <td>{{ $sakit }}</td>
                     <td>{{ $izin }}</td>
                     <td>{{ $alpha }}</td>
                 </tr>
+                @php
+                    $totalSakit += $sakit;
+                    $totalIzin += $izin;
+                    $totalAlpha += $alpha;
+                @endphp
             @endforeach
         </tbody>
     </table>
 
     @php
-        $persenSakit = $totalHari ? ($totalSakit / $totalHari) * 100 : 0;
-        $persenIzin = $totalHari ? ($totalIzin / $totalHari) * 100 : 0;
-        $persenAlpha = $totalHari ? ($totalAlpha / $totalHari) * 100 : 0;
+        $persenSakit = ($totalSakit / $totalHari) * 100;
+        $persenIzin = ($totalIzin / $totalHari) * 100;
+        $persenAlpha = ($totalAlpha / $totalHari) * 100;
         $totalPersen = $persenSakit + $persenIzin + $persenAlpha;
     @endphp
 
@@ -159,8 +165,7 @@
 
     @php
         use Carbon\Carbon;
-        $tanggalAkhirBulan = Carbon::now()->endOfMonth()->translatedFormat('d F Y');
-        $institution = \App\Models\Institution::first();
+        $tanggalAkhirBulan = Carbon::now()->endOfMonth()->translatedFormat('d F Y'); // Format dalam bahasa Indonesia
     @endphp
     <table class="signature-table">
         <tr>
@@ -169,12 +174,14 @@
                 <p>Kepala {{ $institution->name }}</p>
                 <br><br><br><br>
                 <p><strong>{{ $institution->institution_head }}</strong></p>
+                {{--  <p>NIP: 19630805 198305 1 006</p>  --}}
             </td>
             <td>
                 <p>Kemanggungan, {{ $tanggalAkhirBulan }}</p>
                 <p>Guru {{ $kelas->level->name }} {{ $kelas->name }}</p>
                 <br><br><br><br>
                 <p><strong>{{ $teacher->full_name }}</strong></p>
+                {{--  <p>NIP: .....................</p>  --}}
             </td>
         </tr>
     </table>

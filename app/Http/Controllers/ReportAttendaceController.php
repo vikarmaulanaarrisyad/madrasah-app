@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendances;
 use App\Models\LearningActivity;
+use App\Models\Student;
 use App\Models\Teacher;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -17,54 +18,6 @@ class ReportAttendaceController extends Controller
         return view('admin.report.attendace.index');
     }
 
-    public function filterPresensi1(Request $request)
-    {
-        $bulan = (int) $request->bulan;
-
-        if (!$bulan) {
-            return response()->json(['message' => 'Bulan tidak boleh kosong'], 400);
-        }
-
-        // Konversi angka bulan ke nama bulan
-        $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
-
-        // Ambil data presensi berdasarkan bulan yang dipilih
-        $presensi = Attendances::with('student')
-            ->whereMonth('date', $bulan)
-            ->orderBy('date', 'asc')
-            ->get();
-
-        // Buat struktur data agar lebih mudah ditampilkan dalam tabel
-        $data = [];
-        foreach ($presensi as $p) {
-            $namaSiswa = $p->student->full_name;
-            $tanggal = Carbon::parse($p->date)->day; // Ambil angka tanggal (1-31)
-
-            // Jika belum ada data siswa, buat array default dengan nilai '-'
-            if (!isset($data[$namaSiswa])) {
-                $data[$namaSiswa] = array_fill(1, 31, '-');
-            }
-
-            // Tentukan simbol berdasarkan status kehadiran
-            $statusSymbol = match ($p->status) {
-                'Hadir' => 'H',
-                'Izin' => 'I',
-                'Sakit' => 'S',
-                'Alpha' => 'A',
-                default => '-',
-            };
-
-            // Simpan status kehadiran pada tanggal yang sesuai
-            $data[$namaSiswa][$tanggal] = $statusSymbol;
-        }
-
-        return response()->json([
-            'data' => $data,
-            'message' => "Data presensi untuk bulan $namaBulan",
-            'namaBulan' => $namaBulan
-        ]);
-    }
-
     public function filterPresensi(Request $request)
     {
         $bulan = (int) $request->bulan;
@@ -74,30 +27,53 @@ class ReportAttendaceController extends Controller
         }
 
         // Konversi angka bulan ke nama bulan
-        $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
+        $namaBulan = Carbon::now()->month($bulan)->translatedFormat('F');
 
-        // Ambil ID guru yang sedang login
-        $teacherId = Auth::user()->id;
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
 
-        // menghitung jumlah hari
-        $jumlahHari = Carbon::create(null, $bulan)->daysInMonth();
+        // Ambil guru yang login
+        $teacher = Teacher::where('user_id', $userId)->first();
+
+        if (!$teacher) {
+            return response()->json(['message' => 'Guru tidak ditemukan'], 404);
+        }
+
+        // Ambil semua siswa yang diajar oleh guru yang sedang login
+        $students = Student::whereHas('learningActivities', function ($q) use ($teacher) {
+            $q->where('teacher_id', $teacher->id);
+        })->pluck('id'); // Ambil hanya ID siswa
+
+        // Jika tidak ada siswa, langsung return dengan data kosong
+        if ($students->isEmpty()) {
+            return response()->json([
+                'data' => [],
+                'count' => 0,
+                'message' => "Tidak ada data presensi untuk bulan $namaBulan",
+                'namaBulan' => $namaBulan
+            ]);
+        }
+
+        // Menghitung jumlah hari dalam bulan yang dipilih
+        $jumlahHari = Carbon::now()->month($bulan)->daysInMonth();
 
         // Ambil data presensi berdasarkan bulan yang dipilih dan guru yang login
-        $presensi = Attendances::with('student.learningActivities')
+        $presensi = Attendances::whereIn('student_id', $students)
             ->whereMonth('date', $bulan)
             ->orderBy('date', 'asc')
             ->get();
 
         // Buat struktur data agar lebih mudah ditampilkan dalam tabel
         $data = [];
+
+        foreach ($students as $studentId) {
+            $student = Student::find($studentId);
+            $data[$student->full_name] = array_fill(1, $jumlahHari, 'A');
+        }
+
         foreach ($presensi as $p) {
             $namaSiswa = $p->student->full_name;
             $tanggal = Carbon::parse($p->date)->day; // Ambil angka tanggal (1-31)
-
-            // Jika belum ada data siswa, buat array default dengan nilai '-'
-            if (!isset($data[$namaSiswa])) {
-                $data[$namaSiswa] = array_fill(1, $jumlahHari, 'A');
-            }
 
             // Tentukan simbol berdasarkan status kehadiran
             $statusSymbol = match ($p->status) {
@@ -120,111 +96,80 @@ class ReportAttendaceController extends Controller
         ]);
     }
 
-    public function downloadPdf1(Request $request)
-    {
-        $bulan = (int) $request->query('bulan');
-
-        if (!$bulan) {
-            return back()->with('error', 'Bulan tidak boleh kosong.');
-        }
-
-        // Konversi angka bulan ke nama bulan
-        $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
-
-        // Ambil ID guru yang sedang login
-        $teacherId = Auth::user()->id;
-
-        // menghitung jumlah hari
-        $jumlahHari = Carbon::create(null, $bulan)->daysInMonth();
-
-        // Ambil data presensi sesuai filterPresensi
-        $presensi = Attendances::with('student.learningActivities')
-            ->whereMonth('date', $bulan)
-            ->orderBy('date', 'asc')
-            ->get();
-
-        // Buat struktur data sesuai dengan `filterPresensi`
-        $data = [];
-        foreach ($presensi as $p) {
-            $namaSiswa = $p->student->full_name;
-            $nisn = $p->student->nisn;
-            $tanggal = Carbon::parse($p->date)->day; // Ambil angka tanggal (1-31)
-
-            // Jika belum ada data siswa, buat array default dengan nilai '-'
-            if (!isset($data[$namaSiswa])) {
-                $data[$namaSiswa] = array_fill(1, $jumlahHari, 'A');
-                $data[$namaSiswa]['nisn'] = $nisn; // Simpan NISN dalam array siswa
-            }
-
-            // Tentukan simbol berdasarkan status kehadiran
-            $statusSymbol = match ($p->status) {
-                'Hadir' => 'H',
-                'Izin' => 'I',
-                'Sakit' => 'S',
-                'Alpha' => 'A',
-                default => 'A',
-            };
-
-            // Simpan status kehadiran pada tanggal yang sesuai
-            $data[$namaSiswa][$tanggal] = $statusSymbol;
-        }
-
-
-        // Load PDF dari view Blade dengan ukuran F4 & landscape
-        $pdf = Pdf::loadView('admin.report.attendace.pdf', compact('data', 'namaBulan', 'jumlahHari',))
-            ->setPaper('a4', 'landscape'); // Ukuran F4 dalam mm & landscape
-
-        // Tampilkan dulu di browser sebelum bisa di-download
-        return $pdf->stream("presensi-bulan-$bulan.pdf");
-    }
-
     public function downloadPdf(Request $request)
     {
-        $bulan = (int) $request->query('bulan');
+        $bulan = (int) $request->bulan;
 
         if (!$bulan) {
-            return back()->with('error', 'Bulan tidak boleh kosong.');
+            return response()->json(['message' => 'Bulan tidak boleh kosong'], 400);
         }
 
         // Konversi angka bulan ke nama bulan
         $namaBulan = Carbon::create()->month($bulan)->translatedFormat('F');
 
-        // Ambil ID guru yang sedang login
-        $teacherId = Auth::user()->id;
+        // Ambil ID user yang sedang login
+        $userId = Auth::id();
 
-        // Ambil informasi guru yang sedang login
-        $teacher = Teacher::where('user_id', $teacherId)->first();
+        // Ambil guru yang login
+        $teacher = Teacher::where('user_id', $userId)->first();
 
         if (!$teacher) {
-            return back()->with('error', 'Data guru tidak ditemukan.');
+            return response()->json(['message' => 'Guru tidak ditemukan'], 404);
         }
 
         // Ambil kelas yang diajar oleh guru
         $kelas = LearningActivity::where('teacher_id', $teacher->id)
             ->with('level')
-            ->first();
+            ->first(); // Pastikan ada kelas yang ditemukan
+
+        // Ambil semua siswa yang diajar oleh guru yang sedang login
+        $students = Student::whereHas('learningActivities', function ($q) use ($teacher) {
+            $q->where('teacher_id', $teacher->id);
+        })->pluck('id');
+
+        // Jika tidak ada siswa, langsung return dengan data kosong
+        if ($students->isEmpty()) {
+            return response()->json([
+                'data' => [],
+                'count' => 0,
+                'message' => "Tidak ada data presensi untuk bulan $namaBulan",
+                'namaBulan' => $namaBulan
+            ]);
+        }
 
         // Menghitung jumlah hari dalam bulan yang dipilih
         $jumlahHari = Carbon::create(null, $bulan)->daysInMonth();
 
-        // Ambil data presensi sesuai filterPresensi
-        $presensi = Attendances::with('student.learningActivities')
+        // Ambil data presensi dengan relasi student
+        $presensi = Attendances::whereIn('student_id', $students)
             ->whereMonth('date', $bulan)
+            ->with('student') // Load student untuk menghindari error undefined key
             ->orderBy('date', 'asc')
             ->get();
 
-        // Buat struktur data sesuai dengan `filterPresensi`
+        // Buat struktur data agar lebih mudah ditampilkan dalam tabel
         $data = [];
-        foreach ($presensi as $p) {
-            $namaSiswa = $p->student->full_name;
-            $nisn = $p->student->nisn;
-            $tanggal = Carbon::parse($p->date)->day; // Ambil angka tanggal (1-31)
 
-            // Jika belum ada data siswa, buat array default dengan nilai '-'
-            if (!isset($data[$namaSiswa])) {
-                $data[$namaSiswa] = array_fill(1, $jumlahHari, 'A');
-                $data[$namaSiswa]['nisn'] = $nisn; // Simpan NISN dalam array siswa
+        foreach ($students as $studentId) {
+            $student = Student::find($studentId);
+            if ($student) {
+                $data[$student->nisn] = [
+                    'nis' => $student->local_nis ?? '-',
+                    'nama' => $student->full_name,
+                    'nisn' => $student->nisn,
+                    'jumlahHari' => $jumlahHari,
+                    'kehadiran' => array_fill(1, $jumlahHari, 'A') // Default Alpha (A)
+                ];
             }
+        }
+
+        foreach ($presensi as $p) {
+            if (!$p->student) {
+                continue; // Lewati jika student tidak ada
+            }
+
+            $nisn = $p->student->nisn ?? '-';
+            $tanggal = Carbon::parse($p->date)->day;
 
             // Tentukan simbol berdasarkan status kehadiran
             $statusSymbol = match ($p->status) {
@@ -236,10 +181,10 @@ class ReportAttendaceController extends Controller
             };
 
             // Simpan status kehadiran pada tanggal yang sesuai
-            $data[$namaSiswa][$tanggal] = $statusSymbol;
+            $data[$nisn]['kehadiran'][$tanggal] = $statusSymbol;
         }
 
-        // Load PDF dari view Blade dengan ukuran F4 & landscape
+        // Load PDF dari view Blade dengan ukuran A4 & landscape
         $pdf = Pdf::loadView('admin.report.attendace.pdf', compact(
             'data',
             'namaBulan',
