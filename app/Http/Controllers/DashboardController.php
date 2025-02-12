@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AttendaceTeacher;
+use App\Models\Attendances;
 use App\Models\LearningActivity;
 use App\Models\Student;
 use App\Models\Subject;
@@ -28,7 +29,7 @@ class DashboardController extends Controller
             return view('kepalamadrasah.dashboard.index');
         } else {
             $tglIni = date('Y-m-d');
-            $bulanIni = date('m'); // Mendapatkan bulan saat ini
+            $bulanIni = date('m') * 1; // Mendapatkan bulan saat ini
             $tahunIni = date('Y'); // Mendapatkan tahun saat ini
 
             $teacher = Teacher::where('user_id', $user->id)->first();
@@ -43,7 +44,42 @@ class DashboardController extends Controller
                 ->orderBy('tgl_presensi', 'desc')
                 ->get();
 
-            return view('teacher.dashboard.index', compact('presensiHariIni', 'historyBulanIni'));
+            $jumlahHadir = AttendaceTeacher::where('teacher_id', $teacher->id)
+                ->whereMonth('tgl_presensi', $bulanIni)
+                ->whereYear('tgl_presensi', $tahunIni)
+                ->count();
+
+            $jumlahTerlambat = AttendaceTeacher::where('teacher_id', $teacher->id)
+                ->whereMonth('tgl_presensi', $bulanIni)
+                ->whereYear('tgl_presensi', $tahunIni)
+                ->whereTime('jam_in', '>', '07:00:00') // Menambahkan kondisi keterlambatan
+                ->count();
+
+            $students = Student::whereHas('learningActivities', function ($query) use ($teacher) {
+                $query->where('teacher_id', $teacher->id);
+            })->orderBy('full_name', 'Asc')->get();
+
+            // Ambil semua data siswa dengan aktivitas belajar dan kehadiran hari ini
+            $studentsHadir = Student::whereHas('attendance', function ($query) {
+                $query->where('date', date('Y-m-d'))
+                    ->where('status', 'Hadir');
+            })->count();
+            $studentsIzin = Student::whereHas('attendance', function ($query) {
+                $query->where('date', date('Y-m-d'))
+                    ->where('status', 'Izin');
+            })->count();
+            $studentsSakit = Student::whereHas('attendance', function ($query) {
+                $query->where('date', date('Y-m-d'))
+                    ->where('status', 'Sakit');
+            })->count();
+            $studentsAlpa = Student::whereHas('attendance', function ($query) {
+                $query->where('date', date('Y-m-d'))
+                    ->where('status', 'Alpa');
+            })->count();
+
+            $namaBulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+            return view('teacher.dashboard.index', compact(['presensiHariIni', 'studentsSakit', 'studentsIzin', 'studentsAlpa', 'tglIni', 'studentsHadir', 'students', 'historyBulanIni', 'namaBulan', 'bulanIni', 'tahunIni', 'jumlahHadir', 'jumlahTerlambat']));
         }
     }
 }

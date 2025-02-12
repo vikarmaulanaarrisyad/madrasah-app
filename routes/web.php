@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AttendaceController;
+use App\Http\Controllers\AttendaceStudentController;
 use App\Http\Controllers\AttendaceTeacherController;
 use App\Http\Controllers\CuriculumController;
 use App\Http\Controllers\DashboardController;
@@ -83,5 +84,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:Guru']], function () {
         Route::get('/presensi/create', [AttendaceTeacherController::class, 'create'])->name('attendace.teacher_create');
         Route::post('/presensi/store', [AttendaceTeacherController::class, 'store'])->name('attendace.teacher_store');
+
+        // Presensi Siswa
+        route::get('/presensi/siswa', [AttendaceStudentController::class, 'index'])->name('attandace.student_index');
+        route::post('/presensi/siswa/store', [AttendaceStudentController::class, 'store'])->name('attandance.student_store');
     });
 });

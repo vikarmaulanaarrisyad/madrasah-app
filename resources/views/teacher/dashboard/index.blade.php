@@ -181,12 +181,15 @@
             </div>  --}}
 
             <div id="rekappresence">
+                <h3>Rekap Absen Anda Bulan {{ $namaBulan[$bulanIni] }} Tahun {{ $tahunIni }}</h3>
                 <div class="row">
                     <div class="col-3">
                         <div class="card">
-                            <div class="card-body text-center" style="padding:16px 12px !important;">
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $jumlahHadir }}</span>
                                 <ion-icon name="accessibility-outline" style="font-size: 1.6rem;"
-                                    class="text-primary"></ion-icon>
+                                    class="text-primary mb-1"></ion-icon>
                                 <br>
                                 <span style="font-size: 0.8rem">Hadir</span>
                             </div>
@@ -194,29 +197,96 @@
                     </div>
                     <div class="col-3">
                         <div class="card">
-                            <div class="card-body text-center" style="padding:16px 12px !important;">
-                                <ion-icon name="accessibility-outline" style="font-size: 1.6rem;"
-                                    class="text-primary"></ion-icon>
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">10</span>
+                                <ion-icon name="newspaper-outline" style="font-size: 1.6rem;"
+                                    class="text-success mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Izin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">10</span>
+                                <ion-icon name="medkit-outline" style="font-size: 1.6rem;"
+                                    class="text-warning mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Sakit</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $jumlahTerlambat }}</span>
+                                <ion-icon name="alarm-outline" style="font-size: 1.6rem;"
+                                    class="text-danger mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Telat</span>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+
+            <div id="rekappresence">
+                <h3 class="mt-2"> Absen Siswa Tanggal {{ tanggal_indonesia($tglIni) }}</h3>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $studentsHadir }}</span>
+                                <ion-icon name="checkmark-circle-outline" style="font-size: 1.6rem;"
+                                    class="text-primary mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Hadir</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="card">
-                            <div class="card-body text-center" style="padding:16px 12px !important;">
-                                <ion-icon name="accessibility-outline" style="font-size: 1.6rem;"
-                                    class="text-primary"></ion-icon>
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $studentsIzin }}</span>
+                                <ion-icon name="time-outline" style="font-size: 1.6rem;"
+                                    class="text-success mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Izin</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="card">
-                            <div class="card-body text-center" style="padding:16px 12px !important;">
-                                <ion-icon name="accessibility-outline" style="font-size: 1.6rem;"
-                                    class="text-primary"></ion-icon>
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $studentsSakit }}</span>
+                                <ion-icon name="medkit-outline" style="font-size: 1.6rem;"
+                                    class="text-warning mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Sakit</span>
                             </div>
                         </div>
                     </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-body text-center" style="padding:12px 12px !important; line-height: 0.8rem">
+                                <span class="badge bg-danger"
+                                    style="position:absolute; top:3px; right:10px; font-size: 0.6rem; z-index:999">{{ $studentsAlpa }}</span>
+                                <ion-icon name="close-circle-outline" style="font-size: 1.6rem;"
+                                    class="text-danger mb-1"></ion-icon>
+                                <br>
+                                <span style="font-size: 0.8rem">Alpa</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -230,7 +300,8 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#profile" role="tab">
-                                Leaderboard
+                                Daftar Siswa
+                                <span class="badge bg-success ml-1">{{ $students->count() }}</span>
                             </a>
                         </li>
                     </ul>
@@ -253,59 +324,24 @@
                                     </div>
                                 </li>
                             @endforeach
-
-
                         </ul>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel">
                         <ul class="listview image-listview">
-                            <li>
-                                <div class="item">
-                                    <img src="{{ asset('templates') }}/assets/img/sample/avatar/avatar1.jpg"
-                                        alt="image" class="image">
-                                    <div class="in">
-                                        <div>Edward Lindgren</div>
-                                        <span class="text-muted">Designer</span>
+                            @foreach ($students as $item)
+                                <li>
+                                    <div class="item">
+                                        <img src="{{ Storage::url($item->upload_photo) }}" alt="image"
+                                            class="image">
+                                        <div class="in">
+                                            <div>{{ $item->full_name }}</div>
+                                            <span class="text-muted">{{ $item->learningActivities->first()->level->name }}
+                                                {{ $item->learningActivities->first()->name }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <img src="{{ asset('templates') }}/assets/img/sample/avatar/avatar1.jpg"
-                                        alt="image" class="image">
-                                    <div class="in">
-                                        <div>Emelda Scandroot</div>
-                                        <span class="badge badge-primary">3</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <img src="{{ asset('templates') }}/assets/img/sample/avatar/avatar1.jpg"
-                                        alt="image" class="image">
-                                    <div class="in">
-                                        <div>Henry Bove</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <img src="{{ asset('templates') }}/assets/img/sample/avatar/avatar1.jpg"
-                                        alt="image" class="image">
-                                    <div class="in">
-                                        <div>Henry Bove</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="item">
-                                    <img src="{{ asset('templates') }}/assets/img/sample/avatar/avatar1.jpg"
-                                        alt="image" class="image">
-                                    <div class="in">
-                                        <div>Henry Bove</div>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            @endforeach
+
                         </ul>
                     </div>
 

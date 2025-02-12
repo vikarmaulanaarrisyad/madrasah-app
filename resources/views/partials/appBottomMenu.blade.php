@@ -5,11 +5,12 @@
                <strong>Home</strong>
            </div>
        </a>
-       <a href="#" class="item ">
+       <a href="{{ route('attandace.student_index') }}"
+           class="item {{ request()->is('presensi/siswa') ? 'active' : '' }}">
            <div class="col">
-               <ion-icon name="calendar-outline" role="img" class="md hydrated"
-                   aria-label="calendar outline"></ion-icon>
-               <strong>Calendar</strong>
+               <ion-icon name="finger-print-outline" role="img" class="md hydrated"
+                   aria-label="finger-print outline"></ion-icon>
+               <strong>Absen Siswa</strong>
            </div>
        </a>
        <a href="{{ route('attendace.teacher_create') }}" class="item">

@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-    <div class="row" style="margin-top:70px">
+    <div class="row" style="margin-top:60px">
         <div class="col">
             <div id="webcam-capture" class="webcam-capture">
                 <video id="webcam-video" autoplay playsinline style="width: 100%; border-radius: 15px;"></video>
@@ -23,7 +23,23 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 2px;">
+    <!-- Card Informasi Waktu Absen -->
+    <div class="row mt-1">
+        <div class="col">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h5 class="card-title text-info"><ion-icon name="information-circle-outline"></ion-icon> Informasi Absen
+                    </h5>
+                    <p class="card-text">
+                        <strong>Absen Masuk</strong> hanya dapat dilakukan sampai pukul <strong>07:00</strong>. <br>
+                        <strong>Absen Pulang</strong> dapat dilakukan setelah pukul <strong>13:30</strong>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-1">
         <div class="col">
             @if ($absenHariIni > 0)
                 <button id="takeabsen" onclick="ambilGambar()" class="btn btn-danger btn-block">
@@ -38,7 +54,7 @@
             <button id="takeNewPhoto" onclick="fotoUlang()" class="btn btn-warning btn-block" style="display: none;">
                 <ion-icon name="refresh-outline"></ion-icon> Foto Ulang
             </button>
-            <button id="submitAbsen" onclick="kirimDataKeServer()" class="btn btn-success btn-block" style="display: none;">
+            <button id="submitAbsen" onclick="kirimDataKeServer()" class="btn btn-success btn-block mb-3" style="display: none;">
                 <ion-icon name="send-outline"></ion-icon> Kirim Absen
             </button>
         </div>
@@ -50,6 +66,7 @@
         <input type="file" id="foto" name="foto" style="display: none;">
     </form>
 @endsection
+
 
 @push('css')
     <style>
@@ -152,7 +169,86 @@
             }
         }
 
+
         function kirimDataKeServer() {
+            let fotoInput = document.getElementById('foto');
+            let submitButton = document.getElementById('submitAbsen');
+
+            // Cek apakah ada file yang dipilih
+            if (fotoInput.files.length === 0) {
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "Silakan ambil gambar terlebih dahulu.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            // Disable tombol dan ubah teks tombol
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<ion-icon name="hourglass-outline"></ion-icon> Mengirim...';
+
+            let formData = new FormData();
+            formData.append("foto", fotoInput.files[0]);
+            formData.append("_token", $('input[name="_token"]').val()); // Ambil token CSRF dari input hidden
+
+            // Tampilkan Swal Loading
+            Swal.fire({
+                title: "Mengirim...",
+                text: "Mohon tunggu, sedang memproses data absensi.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Kirim data dengan AJAX (jQuery)
+            $.ajax({
+                url: "{{ route('attendace.teacher_store') }}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    stopWebcam(); // Matikan webcam jika digunakan
+
+                    if (response.status == 400) {
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: response.message,
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '<ion-icon name="send-outline"></ion-icon> Kirim Absen';
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: "Berhasil!",
+                        text: response.message,
+                        icon: "success",
+                        timer: 3000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '{{ route('dashboard') }}';
+                    });
+                },
+                error: function(errors) {
+                    Swal.fire({
+                        title: "Gagal!",
+                        text: errors.responseJSON?.message || 'Terjadi kesalahan!',
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<ion-icon name="send-outline"></ion-icon> Kirim Absen';
+                }
+            });
+        }
+
+        function kirimDataKeServer1() {
             let fotoInput = document.getElementById('foto');
             let submitButton = document.getElementById('submitAbsen');
 
@@ -180,6 +276,17 @@
                 .then(response => response.json())
                 .then(data => {
                     stopWebcam();
+                    if (data.status == 400) {
+                        Swal.fire({
+                            title: "Gagal!",
+                            text: data.message,
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+
+                        return;
+                    }
+
                     Swal.fire({
                         title: "Berhasil!",
                         text: data.message,
